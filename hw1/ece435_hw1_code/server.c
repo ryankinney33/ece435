@@ -80,8 +80,8 @@ int main(int argc, char **argv) {
 	/* Print the message we received */
 	printf("Message from client: %s\n",buffer);
 
-	/* Send a response */
-	n = write(new_socket_fd,"Got your message, thanks!",25);
+	/* Echo the message back to the client */
+	n = write(new_socket_fd, buffer, strlen(buffer));
 	if (n<0) {
 		fprintf(stderr,"Error writing. %s\n",
 			strerror(errno));
