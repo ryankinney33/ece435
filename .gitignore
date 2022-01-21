@@ -61,6 +61,10 @@ greybox_tmp/
 #Archives
 *.tar.gz
 
+# Specific executables
+client
+server
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
