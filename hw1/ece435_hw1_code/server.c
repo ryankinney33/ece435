@@ -56,35 +56,39 @@ int main(int argc, char **argv) {
 	/* build up */
 	listen(socket_fd,5);
 
-	/* Call accept to create a new file descriptor for an incoming */
-	/* connection.  It takes the oldest one off the queue */
-	/* We're blocking so it waits here until a connection happens */
-	client_len=sizeof(client_addr);
-	new_socket_fd = accept(socket_fd,
-		(struct sockaddr *)&client_addr,&client_len);
-	if (new_socket_fd<0) {
-		fprintf(stderr,"Error accepting! %s\n",strerror(errno));
-	}
+//	while(1) {
+		/* Call accept to create a new file descriptor for an incoming */
+		/* connection.  It takes the oldest one off the queue */
+		/* We're blocking so it waits here until a connection happens */
+		client_len=sizeof(client_addr);
+		new_socket_fd = accept(socket_fd,
+			(struct sockaddr *)&client_addr,&client_len);
+		if (new_socket_fd<0) {
+			fprintf(stderr,"Error accepting! %s\n",strerror(errno));
+		}
+	while(1){
+		/* Someone connected!  Let's try to read BUFFER_SIZE-1 bytes */
+		memset(buffer,0,BUFFER_SIZE);
+		n = read(new_socket_fd,buffer,(BUFFER_SIZE-1));
+		if (n==0) {
+			fprintf(stderr,"Connection to client lost\n\n");
+		}
+		else if (n<0) {
+			fprintf(stderr,"Error reading from socket %s\n",
+				strerror(errno));
+		}
 
-	/* Someone connected!  Let's try to read BUFFER_SIZE-1 bytes */
-	memset(buffer,0,BUFFER_SIZE);
-	n = read(new_socket_fd,buffer,(BUFFER_SIZE-1));
-	if (n==0) {
-		fprintf(stderr,"Connection to client lost\n\n");
-	}
-	else if (n<0) {
-		fprintf(stderr,"Error reading from socket %s\n",
-			strerror(errno));
-	}
+		/* Print the message we received */
+		printf("Message from client: %s\n",buffer);
 
-	/* Print the message we received */
-	printf("Message from client: %s\n",buffer);
+		/* Echo the message back to the client */
+		n = write(new_socket_fd, buffer, strlen(buffer));
+		if (n<0) {
+			fprintf(stderr,"Error writing. %s\n",
+				strerror(errno));
+		}
 
-	/* Echo the message back to the client */
-	n = write(new_socket_fd, buffer, strlen(buffer));
-	if (n<0) {
-		fprintf(stderr,"Error writing. %s\n",
-			strerror(errno));
+		//close(new_socket_fd);
 	}
 
 	printf("Exiting server\n\n");

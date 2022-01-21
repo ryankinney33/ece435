@@ -69,31 +69,32 @@ int main(int argc, char **argv) {
 	/****************************************/
 	/* Main client loop 			*/
 	/****************************************/
+	while(1) {
+		/* Prompt for a message */
+		printf("Please enter a message to send: ");
+		memset(buffer,0,BUFFER_SIZE);
 
-	/* Prompt for a message */
-	printf("Please enter a message to send: ");
-	memset(buffer,0,BUFFER_SIZE);
+		/* Read message */
+		fgets(buffer,BUFFER_SIZE-1,stdin);
 
-	/* Read message */
-	fgets(buffer,BUFFER_SIZE-1,stdin);
+		/* Write to socket using the "write" system call */
+		n = write(socket_fd,buffer,strlen(buffer));
+		if (n<0) {
+			fprintf(stderr,"Error writing socket! %s\n",
+				strerror(errno));
+		}
 
-	/* Write to socket using the "write" system call */
-	n = write(socket_fd,buffer,strlen(buffer));
-	if (n<0) {
-		fprintf(stderr,"Error writing socket! %s\n",
-			strerror(errno));
+		/* Clear buffer and read the response from the server */
+		memset(buffer,0,BUFFER_SIZE);
+		n = read(socket_fd,buffer,BUFFER_SIZE-1);
+		if (n<0) {
+			fprintf(stderr,"Error reading socket! %s\n",
+				strerror(errno));
+		}
+
+		/* Print the response we got */
+		printf("Received back from server: %s\n\n",buffer);
 	}
-
-	/* Clear buffer and read the response from the server */
-	memset(buffer,0,BUFFER_SIZE);
-	n = read(socket_fd,buffer,BUFFER_SIZE-1);
-	if (n<0) {
-		fprintf(stderr,"Error reading socket! %s\n",
-			strerror(errno));
-	}
-
-	/* Print the response we got */
-	printf("Received back from server: %s\n\n",buffer);
 
 	/* All finished, close the socket/file descriptor */
 	close(socket_fd);
