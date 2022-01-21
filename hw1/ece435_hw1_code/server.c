@@ -56,16 +56,17 @@ int main(int argc, char **argv) {
 	/* build up */
 	listen(socket_fd,5);
 
-//	while(1) {
-		/* Call accept to create a new file descriptor for an incoming */
-		/* connection.  It takes the oldest one off the queue */
-		/* We're blocking so it waits here until a connection happens */
-		client_len=sizeof(client_addr);
-		new_socket_fd = accept(socket_fd,
-			(struct sockaddr *)&client_addr,&client_len);
-		if (new_socket_fd<0) {
-			fprintf(stderr,"Error accepting! %s\n",strerror(errno));
-		}
+	/* Call accept to create a new file descriptor for an incoming */
+	/* connection.  It takes the oldest one off the queue */
+	/* We're blocking so it waits here until a connection happens */
+	client_len=sizeof(client_addr);
+	new_socket_fd = accept(socket_fd,
+		(struct sockaddr *)&client_addr,&client_len);
+	if (new_socket_fd<0) {
+		fprintf(stderr,"Error accepting! %s\n",strerror(errno));
+	}
+
+	/* Read and respond to the client's messages */
 	while(1){
 		/* Someone connected!  Let's try to read BUFFER_SIZE-1 bytes */
 		memset(buffer,0,BUFFER_SIZE);
@@ -88,7 +89,10 @@ int main(int argc, char **argv) {
 				strerror(errno));
 		}
 
-		//close(new_socket_fd);
+		/* Check if client sent "bye" */
+		if(strncmp(buffer,"bye\n",4) == 0){
+			break; // done sending messages; exit the server
+		}
 	}
 
 	printf("Exiting server\n\n");
