@@ -97,9 +97,9 @@ int main(int argc, char **argv) {
 		/* Print the response we got */
 		printf("Received back from server: %s\n\n",buffer);
 
-		/* Check if the echoed message was "bye" */
-		if(strncmp(buffer, "bye\n", 4) == 0){
-			break; // "bye" received, exit
+		/* Check if the echoed message was "BYE" */
+		if(strncmp(buffer, "BYE\n", 4) == 0){
+			break; // "BYE" received, exit
 		}
 	}
 

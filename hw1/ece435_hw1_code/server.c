@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <ctype.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -82,6 +83,11 @@ int main(int argc, char **argv) {
 		/* Print the message we received */
 		printf("Message from client: %s\n",buffer);
 
+		/* Convert the string to uppercase */
+		for(int i = 0; i < strlen(buffer); ++i){
+			buffer[i] = toupper(buffer[i]);
+		}
+
 		/* Echo the message back to the client */
 		n = write(new_socket_fd, buffer, strlen(buffer));
 		if (n<0) {
@@ -90,7 +96,7 @@ int main(int argc, char **argv) {
 		}
 
 		/* Check if client sent "bye" */
-		if(strncmp(buffer,"bye\n",4) == 0){
+		if(strncmp(buffer,"BYE\n",4) == 0){
 			break; // done sending messages; exit the server
 		}
 	}
