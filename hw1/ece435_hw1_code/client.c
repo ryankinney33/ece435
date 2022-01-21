@@ -74,8 +74,10 @@ int main(int argc, char **argv) {
 		printf("Please enter a message to send: ");
 		memset(buffer,0,BUFFER_SIZE);
 
-		/* Read message */
-		fgets(buffer,BUFFER_SIZE-1,stdin);
+		/* Read message and perform error checking */
+		if(fgets(buffer,BUFFER_SIZE-1,stdin)==NULL){
+			fprintf(stderr,"Error reading message! %s\n",strerror(errno));
+		}
 
 		/* Write to socket using the "write" system call */
 		n = write(socket_fd,buffer,strlen(buffer));
@@ -94,6 +96,11 @@ int main(int argc, char **argv) {
 
 		/* Print the response we got */
 		printf("Received back from server: %s\n\n",buffer);
+
+		/* Check if the echoed message was "bye" */
+		if(strncmp(buffer, "bye\n", 4) == 0){
+			break; // "bye" received, exit
+		}
 	}
 
 	/* All finished, close the socket/file descriptor */
