@@ -6,6 +6,7 @@
 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #define BUFFER_SIZE	256
 
@@ -66,6 +67,13 @@ int main(int argc, char **argv) {
 	if (new_socket_fd<0) {
 		fprintf(stderr,"Error accepting! %s\n",strerror(errno));
 	}
+
+	/* Extract the port and ip address of the incoming client */
+	struct sockaddr_in* client_addr_in = (struct sockaddr_in*)&client_addr;
+	char* client_ip = inet_ntoa(client_addr_in->sin_addr);
+
+	/* Print the port and address of the incoming client */
+	printf("Client ip: %s\n",client_ip);
 
 	/* Read and respond to the client's messages */
 	while(1){
