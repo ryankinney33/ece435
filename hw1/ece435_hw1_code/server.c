@@ -71,9 +71,10 @@ int main(int argc, char **argv) {
 	/* Extract the port and ip address of the incoming client */
 	struct sockaddr_in* client_addr_in = (struct sockaddr_in*)&client_addr;
 	char* client_ip = inet_ntoa(client_addr_in->sin_addr);
+	unsigned short int client_port = ntohs(client_addr_in->sin_port);
 
-	/* Print the port and address of the incoming client */
-	printf("Client ip: %s\n",client_ip);
+	/* Print the ip address and port of the incoming client */
+	printf("Incoming connection from %s:%u\n",client_ip,client_port);
 
 	/* Read and respond to the client's messages */
 	while(1){
