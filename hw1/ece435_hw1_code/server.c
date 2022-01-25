@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 	unsigned short int client_port = ntohs(client_addr_in->sin_port);
 
 	/* Print the ip address and port of the incoming client */
-	printf("Incoming connection from %s:%u\n",client_ip,client_port);
+	printf("Incoming connection from %s on port %u\n",client_ip,client_port);
 
 	/* Read and respond to the client's messages */
 	while(1){
