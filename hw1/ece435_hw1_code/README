@@ -1,9 +1,11 @@
 ECE435 -- Spring 2022
 
-Name:
+Name: Ryan Kinney
 
 Describe the "something cool" that you did:
+	I changed the server to print the address and port of the connected client
 
 Answer to Questions in Part 5:
-
+	(a) The physical layer deals with the actual bits, voltages, and frequencies.
+	(b) The network layer deals with routing packets.
 
