@@ -64,6 +64,7 @@ greybox_tmp/
 # Specific executables
 client
 server
+webserver
 
 # Kernel Module Compile Results
 *.mod*
