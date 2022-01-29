@@ -62,6 +62,12 @@ int main(int argc, char **argv) {
 	/* build up */
 	listen(socket_fd,5);
 
+
+	char *filename = calloc(1,sizeof(char)); /* The name of the requested file */
+	long int fname_length = 1; /* The size of the filename array */
+	int long_name = 0; /* Flag for long filenames */
+
+
 wait_for_connection:
 
 	/* Call accept to create a new file descriptor for an incoming */
@@ -75,9 +81,9 @@ wait_for_connection:
 		exit(1);
 	}
 
-	char *filename = calloc(1,sizeof(char)); /* The name of the requested file */
-	long int fname_length = 1; /* The size of the filename array */
-	int long_name = 0; /* Flag for long filenames */
+	filename = calloc(1,sizeof(char));
+	fname_length = 1;
+	long_name = 0;
 
 	while(1) {
 		/* Someone connected!  Let's try to read BUFFER_SIZE-1 bytes */
@@ -130,15 +136,14 @@ wait_for_connection:
 			}
 			filename = tmp;
 			strncat(filename, get + 5, size); /* Append the data to the filename string */
-
-			if (!long_name) { /* done getting the file name */
-			}
 		}
 
 		/* Search the buffer to see if there is a line with just \r\n */
 		char* CRLF = strstr(buffer, "\r\n\r\n");
 
 		if (n < BUFFER_SIZE - 1 || CRLF != NULL) { /* HTTP request complete; send response */
+			if (CRLF == NULL)
+				fprintf(stderr, "CRLF IS NULL\n");
 			fprintf(stderr, "Extracted filename is '%s'\n",filename);
 			send_response (new_socket_fd, filename);
 
@@ -150,10 +155,13 @@ wait_for_connection:
 				break;
 			}
 			filename = tmp;
+			filename[0] = 0;
 			fname_length = 1;
 			long_name = 0;
 		}
 	}
+
+	free(filename);
 
 	close(new_socket_fd);
 
