@@ -135,7 +135,10 @@ wait_for_connection:
 			}
 		}
 
-		if (n < BUFFER_SIZE - 1) { /* HTTP request complete; send response */
+		/* Search the buffer to see if there is a line with just \r\n */
+		char* CRLF = strstr(buffer, "\r\n\r\n");
+
+		if (n < BUFFER_SIZE - 1 || CRLF != NULL) { /* HTTP request complete; send response */
 			fprintf(stderr, "Extracted filename is '%s'\n",filename);
 			send_response (new_socket_fd, filename);
 
