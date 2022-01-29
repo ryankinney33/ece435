@@ -104,44 +104,44 @@ wait_for_connection:
 		/* Look for stuff */
 
 		/* Parse the string for a file name */
-		char *get;
-		if (long_name)
-			get = buffer - 5;
-		else
-			get = strstr(buffer, "GET /");
-
-		if (get != NULL) {
-			char* space = strstr(get+5, " "); /* Look for the end of the file name */
-
-			long int size;
-
-			if (space == NULL) {
-				/* End not found */
-				long_name = 1;
-				size = BUFFER_SIZE - 1;
-			} else {
-				/* End found; get the length */
-				long_name = 0;
-				size = (space - get - 5);
-			}
-
-			fname_length += BUFFER_SIZE-1;
-
-			/* Allocate memory for the file name */
-			char *tmp = realloc(filename, fname_length);
-			if (tmp == NULL) {
-				fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
-				free(filename);
-				break;
-			}
-			filename = tmp;
-			strncat(filename, get + 5, size); /* Append the data to the filename string */
-		}
+//		char *get;
+//		if (long_name)
+//			get = buffer - 5;
+//		else
+//			get = strstr(buffer, "GET /");
+//
+//		if (get != NULL) {
+//			char* space = strstr(get+5, " "); /* Look for the end of the file name */
+//
+//			long int size;
+//
+//			if (space == NULL) {
+//				/* End not found */
+//				long_name = 1;
+//				size = BUFFER_SIZE - 1;
+//			} else {
+//				/* End found; get the length */
+//				long_name = 0;
+//				size = (space - get - 5);
+//			}
+//
+//			fname_length += BUFFER_SIZE-1;
+//
+//			/* Allocate memory for the file name */
+//			char *tmp = realloc(filename, fname_length);
+//			if (tmp == NULL) {
+//				fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
+//				free(filename);
+//				break;
+//			}
+//			filename = tmp;
+//			strncat(filename, get + 5, size); /* Append the data to the filename string */
+//		}
 
 		/* Search the buffer to see if there is a line with just \r\n */
 		char* CRLF = strstr(buffer, "\r\n\r\n");
 
-		if (n < BUFFER_SIZE - 1 || CRLF != NULL) { /* HTTP request complete; send response */
+		if (n != BUFFER_SIZE - 1 || CRLF != NULL) { /* HTTP request complete; send response */
 			if (CRLF == NULL)
 				fprintf(stderr, "CRLF IS NULL\n");
 			fprintf(stderr, "Extracted filename is '%s'\n",filename);
@@ -188,23 +188,22 @@ int send_response(int socket_fd, char *filename) {
 	/* Convert the time into the required format */
 	char time_str[150];
 	strftime(time_str, sizeof(time_str), "%a, %d %b %Y %T %Z", current_time);
-	fprintf(stderr, "Strftime returned: '%s'\n", time_str);
 
 	/* Check the filename */
-	if (filename == NULL) {
-		/* Respond with an error message */
-		return -1;
-	}
-
+//	if (filename == NULL) {
+//		/* Respond with an error message */
+//		return -1;
+//	}
+//
 	int fd;
 
-	if (*filename) { /* Check if filename is an empty string */
+//	if (*filename) { /* Check if filename is an empty string */
 		/* Attempt to open index.html */
 		fd = open("index.html", O_RDONLY);
-	} else {
+//	} else {
 		/* Attempt to open the desired file */
-		fd = open(filename, O_RDONLY);
-	}
+//		fd = open(filename, O_RDONLY);
+//	}
 
 	if (fd < 0) { /* Could not open the file */
 		fprintf(stderr, "HTTP ERROR 404\n");
