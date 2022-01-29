@@ -71,9 +71,9 @@ wait_for_connection:
 		exit(1);
 	}
 
-	char *filename; /* The name of the requested file */
-	long int fname_length = 0; /* The size of the filename array */
-	int getting_name = 0; /* Flag for long filenames */
+	char *filename = calloc(1,sizeof(char)); /* The name of the requested file */
+	long int fname_length = 1; /* The size of the filename array */
+	int long_name = 0; /* Flag for long filenames */
 
 	while(1) {
 		/* Someone connected!  Let's try to read BUFFER_SIZE-1 bytes */
@@ -91,78 +91,56 @@ wait_for_connection:
 		/* Print the message we received */
 		printf("Message received: %s\n",buffer);
 
+		/* Parse the string for a file name */
+		char *get;
+		if (long_name)
+			get = buffer - 5;
+		else
+			get = strstr(buffer, "GET /");
 
-		/* Find the "GET" in the request */
-		char *get = strstr(buffer, "GET /");
-
-		/* Check if "GET" was found */
 		if (get != NULL) {
-			/* Look for a space after the filename */
-			char *space = strstr(get+5, " ");
+			char* space = strstr(get+5, " "); /* Look for the end of the file name */
+
+			long int size;
 
 			if (space == NULL) {
-				/*
-				 * Space not found; the requested file name does not fit in the buffer
-				 * Save what was found into the filename buffer
-				 */
-				fname_length = BUFFER_SIZE-5;
-
-				filename = malloc(fname_length * sizeof(char));
-				if (filename == NULL) {
-					fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
-					break;
-				}
-
-				strcpy(filename, buffer+5);
-
-				getting_name = 1;
+				/* End not found */
+				long_name = 1;
+				size = BUFFER_SIZE - 1;
 			} else {
-				
-//				/* End of the filename detected; get the length */
-//				if (getting_name) {
-//					/* Handle long file names */
-//					ptrdiff_t size = space - buffer;
-//					fname_length += size;
-//
-//					filename = realloc(filename, fname_length);
-//					if (filename == NULL) {
-//						fprintf(stderr, "Memory allocation error:%s\n", strerror(errno));
-//						break;
-//					}
-//
-//					/* Append the rest of the filename to the string */
-//					strncat(filename, buffer, size);
-					fname_length = space - get - 5;
-				filename = malloc(fname_length * sizeof(char));
-				if (filename == NULL) {
-					fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
-					break;
-				}
+				/* End found; get the length */
+				long_name = 0;
+				size = (space - get - 5);
+			}
 
-				strncpy(filename, get+5, fname_length);
+			fname_length += BUFFER_SIZE-1;
 
-				fprintf(stderr, "File name = '%s'\n",filename);
+			/* Allocate memory for the file name */
+			char *tmp = realloc(filename, fname_length);
+			if (tmp == NULL) {
+				fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
+				free(filename);
+				break;
+			}
 
-				/* Reset the flags and deallocate the filename string */
-				getting_name = 0;
-				fname_length = 0;
+			filename = tmp;
+
+			strncat(filename, get + 5, size); /* Append the data to the filename string */
+
+
+			if (!long_name) { /* done with file name, deallocate memory */
+
+				fprintf(stderr, "Extracted filename is '%s'\n",filename);
 				free(filename);
 			}
 		}
 
-
-//		ptrdiff_t size = space-get+5;
-
-//		printf("Filename length = %li\n", size);
-
-		/* Send a response */
-	/*	n = write(new_socket_fd,"Got your message, thanks!\r\n\r\n",29);
-		if (n<0) {
-			fprintf(stderr,"Error writing. %s\n",
-				strerror(errno));
-		}*/
-
-
+//		/* Send a response */
+//		n = write(new_socket_fd,"Got your message, thanks!\r\n\r\n",29);
+//		if (n<0) {
+//			fprintf(stderr,"Error writing. %s\n",
+//				strerror(errno));
+//		}
 	}
 
 	close(new_socket_fd);
