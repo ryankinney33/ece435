@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <stddef.h>
+#include <time.h>
+#include <fcntl.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -12,6 +14,8 @@
 
 /* Default port to listen on */
 #define DEFAULT_PORT	8080
+
+int send_response(int socket_fd, char* filename);
 
 int main(int argc, char **argv) {
 
@@ -89,7 +93,9 @@ wait_for_connection:
 		}
 
 		/* Print the message we received */
-		printf("Message received: %s\n",buffer);
+		printf("%s",buffer);
+
+		/* Look for stuff */
 
 		/* Parse the string for a file name */
 		char *get;
@@ -122,25 +128,28 @@ wait_for_connection:
 				free(filename);
 				break;
 			}
-
 			filename = tmp;
-
 			strncat(filename, get + 5, size); /* Append the data to the filename string */
 
-
-			if (!long_name) { /* done with file name, deallocate memory */
-
-				fprintf(stderr, "Extracted filename is '%s'\n",filename);
-				free(filename);
+			if (!long_name) { /* done getting the file name */
 			}
 		}
 
-//		/* Send a response */
-//		n = write(new_socket_fd,"Got your message, thanks!\r\n\r\n",29);
-//		if (n<0) {
-//			fprintf(stderr,"Error writing. %s\n",
-//				strerror(errno));
-//		}
+		if (n < BUFFER_SIZE - 1) { /* HTTP request complete; send response */
+			fprintf(stderr, "Extracted filename is '%s'\n",filename);
+			send_response (new_socket_fd, filename);
+
+			/* Reset flags and deallocate the filename string */
+			char *tmp = realloc(filename, sizeof(char));
+			if (tmp == NULL) {
+				fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
+				free(filename);
+				break;
+			}
+			filename = tmp;
+			fname_length = 1;
+			long_name = 0;
+		}
 	}
 
 	close(new_socket_fd);
@@ -151,6 +160,54 @@ wait_for_connection:
 
 	/* Close the sockets */
 	close(socket_fd);
+
+	return 0;
+}
+
+int send_response(int socket_fd, char *filename) {
+
+	/* Get the time */
+	time_t tmp = time(NULL);
+	struct tm *current_time = gmtime(&tmp);
+	if (current_time == NULL) {
+		fprintf(stderr, "Error getting time: %s\n", strerror(errno));
+		return -1;
+	}
+
+	/* Convert the time into the required format */
+	char time_str[150];
+	strftime(time_str, sizeof(time_str), "%a, %d %b %Y %T %Z", current_time);
+	fprintf(stderr, "Strftime returned: '%s'\n", time_str);
+
+	/* Check the filename */
+	if (filename == NULL) {
+		/* Respond with an error message */
+		return -1;
+	}
+
+	int fd;
+
+	if (*filename) { /* Check if filename is an empty string */
+		/* Attempt to open index.html */
+		fd = open("index.html", O_RDONLY);
+	} else {
+		/* Attempt to open the desired file */
+		fd = open(filename, O_RDONLY);
+	}
+
+	if (fd < 0) { /* Could not open the file */
+		fprintf(stderr, "HTTP ERROR 404\n");
+
+		/* Send error 404 response */
+		dprintf(socket_fd, "HTTP/1.1 404 Not Found\r\nDate: %s\r\n", time_str);
+		dprintf(socket_fd, "Server: ECE435\r\nContent-Length: 158\r\n");
+		dprintf(socket_fd, "Connection: close\r\nContent-Type: text/html; charset=iso-8859-1\r\n\r\n");
+		dprintf(socket_fd, "<html><head>\r\n<title>404 Not Found</title>\r\n</head><body>\r\n");
+		dprintf(socket_fd, "<h1>Not Found</h1>\r\n<p>The requested URL was not found on the server.");
+		dprintf(socket_fd, "<br />\r\n</p>\r\n</body></html>\r\n");
+	}
+
+
 
 	return 0;
 }
