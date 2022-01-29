@@ -138,12 +138,12 @@ wait_for_connection:
 //			strncat(filename, get + 5, size); /* Append the data to the filename string */
 //		}
 
-		/* Search the buffer to see if there is a line with just \r\n */
-		char* CRLF = strstr(buffer, "\r\n\r\n");
+		/* Look for the end of the HTTP header */
+		fprintf(stderr, "n = %i\n",n);
 
-		if (n != BUFFER_SIZE - 1 || CRLF != NULL) { /* HTTP request complete; send response */
-			if (CRLF == NULL)
-				fprintf(stderr, "CRLF IS NULL\n");
+		char *CRLF = strstr(buffer, "\n\r\n");
+
+		if (n < BUFFER_SIZE - 1 || CRLF != NULL) { /* HTTP request complete; send response */
 			fprintf(stderr, "Extracted filename is '%s'\n",filename);
 			send_response (new_socket_fd, filename);
 
