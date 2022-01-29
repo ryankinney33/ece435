@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <stddef.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -10,7 +11,7 @@
 #define BUFFER_SIZE	256
 
 /* Default port to listen on */
-#define DEFAULT_PORT	31337
+#define DEFAULT_PORT	8080
 
 int main(int argc, char **argv) {
 
@@ -70,6 +71,10 @@ wait_for_connection:
 		exit(1);
 	}
 
+	char *filename; /* The name of the requested file */
+	long int fname_length = 0; /* The size of the filename array */
+	int getting_name = 0; /* Flag for long filenames */
+
 	while(1) {
 		/* Someone connected!  Let's try to read BUFFER_SIZE-1 bytes */
 		memset(buffer,0,BUFFER_SIZE);
@@ -86,12 +91,76 @@ wait_for_connection:
 		/* Print the message we received */
 		printf("Message received: %s\n",buffer);
 
+
+		/* Find the "GET" in the request */
+		char *get = strstr(buffer, "GET /");
+
+		/* Check if "GET" was found */
+		if (get != NULL) {
+			/* Look for a space after the filename */
+			char *space = strstr(get+5, " ");
+
+			if (space == NULL) {
+				/*
+				 * Space not found; the requested file name does not fit in the buffer
+				 * Save what was found into the filename buffer
+				 */
+				fname_length = BUFFER_SIZE-5;
+
+				filename = malloc(fname_length * sizeof(char));
+				if (filename == NULL) {
+					fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
+					break;
+				}
+
+				strcpy(filename, buffer+5);
+
+				getting_name = 1;
+			} else {
+				
+//				/* End of the filename detected; get the length */
+//				if (getting_name) {
+//					/* Handle long file names */
+//					ptrdiff_t size = space - buffer;
+//					fname_length += size;
+//
+//					filename = realloc(filename, fname_length);
+//					if (filename == NULL) {
+//						fprintf(stderr, "Memory allocation error:%s\n", strerror(errno));
+//						break;
+//					}
+//
+//					/* Append the rest of the filename to the string */
+//					strncat(filename, buffer, size);
+					fname_length = space - get - 5;
+				filename = malloc(fname_length * sizeof(char));
+				if (filename == NULL) {
+					fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
+					break;
+				}
+
+				strncpy(filename, get+5, fname_length);
+
+				fprintf(stderr, "File name = '%s'\n",filename);
+
+				/* Reset the flags and deallocate the filename string */
+				getting_name = 0;
+				fname_length = 0;
+				free(filename);
+			}
+		}
+
+
+//		ptrdiff_t size = space-get+5;
+
+//		printf("Filename length = %li\n", size);
+
 		/* Send a response */
-		n = write(new_socket_fd,"Got your message, thanks!\r\n\r\n",29);
+	/*	n = write(new_socket_fd,"Got your message, thanks!\r\n\r\n",29);
 		if (n<0) {
 			fprintf(stderr,"Error writing. %s\n",
 				strerror(errno));
-		}
+		}*/
 
 
 	}
