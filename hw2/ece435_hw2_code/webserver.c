@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <time.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -42,7 +43,7 @@ int main(int argc, char **argv) {
 	setsockopt(socket_fd,SOL_SOCKET,SO_REUSEADDR,(char *)&on,sizeof(on));
 
 	/* Set up the server address to listen on */
-	/* The memset stes the address to 0.0.0.0 which means */
+	/* The memset sets the address to 0.0.0.0 which means */
 	/* listen on any interface. */
 	memset(&server_addr,0,sizeof(struct sockaddr_in));
 	server_addr.sin_family=AF_INET;
@@ -104,47 +105,43 @@ wait_for_connection:
 		/* Look for stuff */
 
 		/* Parse the string for a file name */
-//		char *get;
-//		if (long_name)
-//			get = buffer - 5;
-//		else
-//			get = strstr(buffer, "GET /");
-//
-//		if (get != NULL) {
-//			char* space = strstr(get+5, " "); /* Look for the end of the file name */
-//
-//			long int size;
-//
-//			if (space == NULL) {
-//				/* End not found */
-//				long_name = 1;
-//				size = BUFFER_SIZE - 1;
-//			} else {
-//				/* End found; get the length */
-//				long_name = 0;
-//				size = (space - get - 5);
-//			}
-//
-//			fname_length += BUFFER_SIZE-1;
-//
-//			/* Allocate memory for the file name */
-//			char *tmp = realloc(filename, fname_length);
-//			if (tmp == NULL) {
-//				fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
-//				free(filename);
-//				break;
-//			}
-//			filename = tmp;
-//			strncat(filename, get + 5, size); /* Append the data to the filename string */
-//		}
+		char *get;
+		if (long_name)
+			get = buffer - 5;
+		else
+			get = strstr(buffer, "GET /");
+
+		if (get != NULL) {
+			char* space = strstr(get+5, " "); /* Look for the end of the file name */
+
+			long int size;
+
+			if (space == NULL) {
+				/* End not found */
+				long_name = 1;
+				size = BUFFER_SIZE - 1;
+			} else {
+				/* End found; get the length */
+				long_name = 0;
+				size = (space - get - 5);
+			}
+
+			fname_length += BUFFER_SIZE-1;
+
+			/* Allocate memory for the file name */
+			char *tmp = realloc(filename, fname_length);
+			if (tmp == NULL) {
+				fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
+				free(filename);
+				break;
+			}
+			filename = tmp;
+			strncat(filename, get + 5, size); /* Append the data to the filename string */
+		}
 
 		/* Look for the end of the HTTP header */
-		fprintf(stderr, "n = %i\n",n);
-
 		char *CRLF = strstr(buffer, "\n\r\n");
-
 		if (n < BUFFER_SIZE - 1 || CRLF != NULL) { /* HTTP request complete; send response */
-			fprintf(stderr, "Extracted filename is '%s'\n",filename);
 			send_response (new_socket_fd, filename);
 
 			/* Reset flags and deallocate the filename string */
@@ -190,24 +187,34 @@ int send_response(int socket_fd, char *filename) {
 	strftime(time_str, sizeof(time_str), "%a, %d %b %Y %T %Z", current_time);
 
 	/* Check the filename */
-//	if (filename == NULL) {
-//		/* Respond with an error message */
-//		return -1;
-//	}
-//
+	if (filename == NULL) {
+		/* Respond with internal server error message */
+		dprintf(socket_fd, "HTTP/1.1 500 Internal Server Error\r\n");
+		dprintf(socket_fd, "Date: %s\r\nServer: ECE435\r\n", time_str);
+		dprintf(socket_fd, "Content-Length: 216\r\nConnection: close\r\n");
+		dprintf(socket_fd, "Content-Type: text/html; charset=iso-8859-1\r\n\r\n");
+		dprintf(socket_fd, "<html><head>\r\n<title>500 Internal Server Error</title>\r\n</head><body>\r\n");
+		dprintf(socket_fd, "<h1>Internal Server Error</h1>\r\n<p>The server encountered an internal error and was unable");
+		dprintf(socket_fd, " to complete the request.<br />\r\n</p>\r\n</body></html>\r\n");
+
+		return -1;
+	}
+
 	int fd;
 
-//	if (*filename) { /* Check if filename is an empty string */
+	if (*filename == '\0') { /* Check if filename is an empty string */
+		printf("File requested: 'index.html'\n");
+
 		/* Attempt to open index.html */
 		fd = open("index.html", O_RDONLY);
-//	} else {
+	} else {
+		printf("File requested: '%s'\n",filename);
+
 		/* Attempt to open the desired file */
-//		fd = open(filename, O_RDONLY);
-//	}
+		fd = open(filename, O_RDONLY);
+	}
 
 	if (fd < 0) { /* Could not open the file */
-		fprintf(stderr, "HTTP ERROR 404\n");
-
 		/* Send error 404 response */
 		dprintf(socket_fd, "HTTP/1.1 404 Not Found\r\nDate: %s\r\n", time_str);
 		dprintf(socket_fd, "Server: ECE435\r\nContent-Length: 158\r\n");
@@ -215,9 +222,43 @@ int send_response(int socket_fd, char *filename) {
 		dprintf(socket_fd, "<html><head>\r\n<title>404 Not Found</title>\r\n</head><body>\r\n");
 		dprintf(socket_fd, "<h1>Not Found</h1>\r\n<p>The requested URL was not found on the server.");
 		dprintf(socket_fd, "<br />\r\n</p>\r\n</body></html>\r\n");
+	} else {
+		/* Get the file stats */
+		struct stat filestat;
+		fstat(fd, &filestat);
+
+		/* Extract the necessary file stats */
+		struct tm *mod_time = gmtime(&filestat.st_mtim.tv_sec);
+		long int size = filestat.st_size;
+
+		/* Send the HTTP header */
+		dprintf(socket_fd, "HTTP/1.1 200 OK\r\nDate: %s\r\nServer: ECE435\r\n", time_str);
+		strftime(time_str, sizeof(time_str), "%a, %d %b %Y %T %Z", mod_time);
+		dprintf(socket_fd, "Last-Modified: %s\r\nContent-Length: %li\r\n", time_str, size);
+		dprintf(socket_fd, "Content-Type: text/html\r\n\r\n");
+
+		/* Buffer for holding data from the file */
+		char buffer[BUFFER_SIZE];
+		buffer[BUFFER_SIZE-1] = 0;
+
+		int n = 0;
+		do {
+			/* Read the data from the file */
+			n = read(fd, buffer, BUFFER_SIZE-1);
+			if (n < 0) {
+				fprintf(stderr, "Error reading from file: %s\n", strerror(errno));
+				close(fd);
+				return -1;
+			}
+
+			/* Write the data to the socket */
+			if (write(socket_fd, buffer, strlen(buffer)) < 0) {
+				fprintf(stderr, "Error writing to the socket: %s\n", strerror(errno));
+				close(fd);
+				return -1;
+			}
+		} while (n > 0);
 	}
-
-
 
 	return 0;
 }
