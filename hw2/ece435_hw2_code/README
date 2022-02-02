@@ -2,7 +2,19 @@ ECE435 HW#2 -- Spring 2022
 
 Name: Ryan Kinney
 
+"Something cool":
+	I modified the test.html file to have a size 1 header, a size
+2 header, centering, a horizontal rule, changed the title.
+
 Answers to Question 2:
-
-
+a.)
+ 	  i. The requested file was not found on the server.
+	 ii. The server refuses to brew coffee because it is a teapot.
+	iii. The requested file is unavailable for legal reasons, such
+	     as government censorship.
+b.)
+	  i. The maine.edu webserver was running nginx/1.16.1
+	 ii. The location of the webserver has "Moved Temporarily".
+	     It appears that the server is redirecting to a more
+	     secure location (https://www.maine.edu vs http://www.maine.edu).
 
