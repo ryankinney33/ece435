@@ -224,7 +224,7 @@ int send_response(int socket_fd, char *filename) {
 		dprintf(socket_fd, "HTTP/1.1 200 OK\r\nDate: %s\r\nServer: ECE435\r\n", time_str);
 		strftime(time_str, sizeof(time_str), "%a, %d %b %Y %T %Z", mod_time);
 		dprintf(socket_fd, "Last-Modified: %s\r\nContent-Length: %li\r\n", time_str, size);
-		dprintf(socket_fd, "Connectoin: close\r\nContent-Type: text/html\r\n\r\n");
+		dprintf(socket_fd, "Connection: close\r\nContent-Type: text/html\r\n\r\n");
 
 		/* Buffer for holding data from the file */
 		char buffer[BUFFER_SIZE];
