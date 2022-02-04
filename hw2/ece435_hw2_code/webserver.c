@@ -64,9 +64,9 @@ int main(int argc, char **argv) {
 	listen(socket_fd,5);
 
 
-	char *filename = calloc(1,sizeof(char)); /* The name of the requested file */
-	long int fname_length = 1; /* The size of the filename array */
-	int long_name = 0; /* Flag for long filenames */
+	char *filename; /* The name of the requested file */
+	long int fname_length; /* The size of the filename array */
+	int long_name; /* Flag for long filenames */
 
 
 wait_for_connection:
@@ -143,18 +143,7 @@ wait_for_connection:
 		char *CRLF = strstr(buffer, "\n\r\n");
 		if (n < BUFFER_SIZE - 1 || CRLF != NULL) { /* HTTP request complete; send response */
 			send_response (new_socket_fd, filename);
-
-			/* Reset flags and deallocate the filename string */
-			char *tmp = realloc(filename, sizeof(char));
-			if (tmp == NULL) {
-				fprintf(stderr, "Memory allocation error: %s\n", strerror(errno));
-				free(filename);
-				break;
-			}
-			filename = tmp;
-			filename[0] = 0;
-			fname_length = 1;
-			long_name = 0;
+			break;
 		}
 	}
 
@@ -235,7 +224,7 @@ int send_response(int socket_fd, char *filename) {
 		dprintf(socket_fd, "HTTP/1.1 200 OK\r\nDate: %s\r\nServer: ECE435\r\n", time_str);
 		strftime(time_str, sizeof(time_str), "%a, %d %b %Y %T %Z", mod_time);
 		dprintf(socket_fd, "Last-Modified: %s\r\nContent-Length: %li\r\n", time_str, size);
-		dprintf(socket_fd, "Content-Type: text/html\r\n\r\n");
+		dprintf(socket_fd, "Connectoin: close\r\nContent-Type: text/html\r\n\r\n");
 
 		/* Buffer for holding data from the file */
 		char buffer[BUFFER_SIZE];
@@ -258,6 +247,7 @@ int send_response(int socket_fd, char *filename) {
 				return -1;
 			}
 		} while (n > 0);
+		close(fd);
 	}
 
 	return 0;
