@@ -1,0 +1,19 @@
+ECE435 Spring 2022
+Homework 3
+
+Ryan Kinney
+
+1.
+     i.
+	The md5 sum for the original file was:
+	6c5cfaceac22c5c46778588c1986a8a1
+    ii.
+	After modifying the homework number from 3 to 2, the md5 sum was:
+	bb7baecdd2d3d0a70accebb17523e6e2
+   iii.
+	The SHA-256 sum for the modified file was:
+	1e3b699e590e0abdb7b0c07849456fe39a3373a295f741237b5eed808a49a452
+	It is much larger than the md5 sum (256 bits vs 128), making collisions much less likely.
+2.
+	
+
