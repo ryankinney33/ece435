@@ -7,7 +7,6 @@ incremental_db/
 output_files/
 simulation/
 greybox_tmp/
-*.txt
 *.qws
 *.vwf
 *.bak

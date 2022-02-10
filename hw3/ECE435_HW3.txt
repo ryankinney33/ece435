@@ -23,8 +23,7 @@ Ryan Kinney
             The key itself would have to be signed and that key would have to be signed...
             It would depend on trust, whether personal trust or from a Certificate Authority.
     b.
-        In theory the secret message says:
-           
+        The secret message should have a few terrible jokes in it.
 3.
     a.
         SHA-256 uses more bits than SHA-1 (256 instead of 160), making collisions much less common. Also, SHA-1 was "broken" in 2017.
