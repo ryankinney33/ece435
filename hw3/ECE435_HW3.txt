@@ -22,9 +22,13 @@ Ryan Kinney
        ii.
             The key itself would have to be signed and that key would have to be signed...
             It would depend on trust, whether personal trust or from a Certificate Authority.
+            A common method used is a "key signing party" in which a group of people get together
+            and sign each other's keys.
     b.
         The secret message should have a few terrible jokes in it.
 3.
     a.
         SHA-256 uses more bits than SHA-1 (256 instead of 160), making collisions much less common. Also, SHA-1 was "broken" in 2017.
     b.
+        The requested domain name is sent in the HTTP header. If there is cryptography and key-exchange
+        performed before the headers are sent, then the machine serving the website does not know which domain to serve.
