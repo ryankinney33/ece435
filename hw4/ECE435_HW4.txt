@@ -1,0 +1,38 @@
+ECE435 -- Spring 2022
+Homework 4
+
+Ryan Kinney
+
+1.
+	a.
+		 i. It is unlikely the e-mail is legitimate because it came from a cable modem.
+		    One of the 'Received: from' has the source listed from some cable modem in
+		    Canada. That probably means it is not real.
+
+		ii. The .pdf file may contain some malicious code, so it probably should remain unopened.
+	b.
+		 i. That section contains an attached file, more specifically, a jpeg image.
+		ii. The large seemingly random jumble of letters and numbers is the jpeg image encoded in base64.
+
+2.
+	a.
+		  i. The domain was first activated on December 2, 1988.
+		 ii. The top-level domain registrar is EDUCAUSE.
+	b.
+		  i. 130.111.218.23
+		 ii. 2607:f8b0:4006:816::200e
+		iii. There were two listed:
+			nameo.its.maine.edu
+			namep.its.maine.edu
+		 iv. There were five listed:
+			ASPMX.L.GOOGLE.COM
+			ALT1.ASPMX.L.GOOGLE.COM
+			ALT3.ASPMX.L.GOOGLE.COM
+			ALT4.ASPMX.L.GOOGLE.COM
+			ALT2.ASPMX.L.GOOGLE.COM
+		  v. The UMaine mailservers are all from google.com, instead of from maine.edu
+	c.
+		A major problem is known as a cache poisoning attack, in which someone pretends to be an
+		authority and gives wrong results, sending victims to the wrong destination. A way to solve
+		this problem is known as DNSSEC (RFC 3833) in which the DNS responses can be digitally signed.
+
