@@ -1,0 +1,23 @@
+ECE435 HW#5 -- Spring 2022
+
+Name: Ryan Kinney
+
+1.
+  a.
+      i.
+         The first two bytes of the header are the source port, and is 43424
+         in decimal.
+     ii.
+         The destination port is the second two bytes and is 53 in decimal.
+    iii.
+         The packet length is the third pair of bytes and the length is 42 bytes.
+     iv.
+         The checksum is the 4th pair of bytes. It is 0 if unused. In this case,
+         it is enabled and is 9299 (in hex).
+      v.
+         Since the destination port is 53 and the packet contains a domain
+         name, the protocol is DNS.
+  b.
+     UDP is much simpler and has much less overhead. It is mainly used when
+     you want packets to be transmitted quickly and do not care about
+     re-transmitting (like live-streaming for example).
