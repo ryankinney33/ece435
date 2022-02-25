@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <ctype.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -24,6 +25,7 @@ int main(int argc, char **argv) {
 	int optval;
 	struct hostent *hostp;
 	char *hostaddrp; /* IP address */
+	unsigned short int client_port; /* Client port */
 
 	printf("Starting UDP server on port %d\n",port);
 
@@ -63,7 +65,8 @@ int main(int argc, char **argv) {
 
 
 		/* Read from socket */
-		n=read(socket_fd,buffer,(BUFFER_SIZE-1));
+		n=recvfrom(socket_fd,buffer,(BUFFER_SIZE-1), 0,
+				(struct sockaddr*)&client_addr, &client_len);
 
 		if (n==0) {
 			fprintf(stderr,"Connection to client lost\n\n");
@@ -75,9 +78,32 @@ int main(int argc, char **argv) {
 			break;
 		}
 
-		/* Print the message we received */
-		printf("Message from client: %s\n",buffer);
+		/* Get the host and port of the incoming connection */
+		hostp = gethostbyaddr((const char*)&client_addr.sin_addr.s_addr,
+				sizeof(client_addr.sin_addr.s_addr), AF_INET);
+		hostaddrp = inet_ntoa(client_addr.sin_addr);
+		client_port = ntohs(client_addr.sin_port);
 
+		/* Print the client address and port */
+		printf("Host: %s - %s\nPort: %u\n",
+				hostp->h_name, hostaddrp, client_port);
+
+		/* Print the message we received */
+		printf("Message received: %s\n", buffer);
+
+		/* Convert the message to uppercase */
+		for (int i = 0; buffer[i] && (i < BUFFER_SIZE-1); ++i) {
+			buffer[i] = toupper(buffer[i]);
+		}
+
+		/* Finally, send the uppercased message back */
+		n = sendto(socket_fd, buffer, strlen(buffer), 0,
+				(struct sockaddr*)&client_addr, client_len);
+		if (n < 0) {
+			fprintf(stderr, "Error writing to socket %s\n",
+					strerror(errno));
+			break;
+		}
 	}
 
 	printf("Exiting server\n\n");

@@ -71,7 +71,10 @@ int main(int argc, char **argv) {
 		memset(buffer,0,BUFFER_SIZE);
 
 		/* Read message */
-		fgets(buffer,BUFFER_SIZE-1,stdin);
+		if(fgets(buffer,BUFFER_SIZE-1,stdin) == NULL) {
+			// Either end of input was reached, or an error occurred
+			break;
+		}
 
 		if (!strncmp(buffer,"bye",3)) time_to_exit=1;
 
@@ -114,7 +117,7 @@ int main(int argc, char **argv) {
 					strerror(errno));
 			}
 			/* Print the response we got */
-			printf("Received back from server: %s\n\n",buffer);
+			printf("Received back from server: %s\n",buffer);
 		}
 
 		/* Otherwise we timed out */
