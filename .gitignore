@@ -64,7 +64,8 @@ greybox_tmp/
 client
 server
 webserver
-
+udp_client
+udp_server
 # Kernel Module Compile Results
 *.mod*
 *.cmd
