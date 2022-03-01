@@ -1,0 +1,30 @@
+ECE435 HW#6 -- Spring 2022
+
+Name: Ryan Kinney
+
+1.
+BEGIN TCP HEADER	Name of Field    Decoded Value
+0x0022: bda5		Source Port      48549
+0x0024: 0050		Dest. Port       80
+0x0026: cdc4 6a49	Sequence Num     3452201545
+0x002a: 3c7b 6ca5	ACK Number       1014721701
+0x002e: 80		Offset/Reserved  8*4 = 32 bytes
+0x002f: 18		Flags            NS = 0; CWR = 0; ECE = 0; URG = 0; ACK = 1; PSH = 1; RST = 0; SYN = 0; FIN = 0
+0x0030: 00e5		Window Size      229 bytes
+0x0032: 79f4		Checksum         31220
+0x0034: 0000		Urgent Pointer   0
+0x0036: 01		Options
+0x0037: 01		Options
+0x0038: 080a		Options
+0x003a: 0104 3e58
+0x003e: 34a8 7bc3
+END TCP HEADER
+BEGIN DATA
+0x0042: 4745 540a	Data?            GET'\n'
+END DATA
+
+2.
+	a. A webserver, considering the port was port 80.
+	b. 
+
+3.
