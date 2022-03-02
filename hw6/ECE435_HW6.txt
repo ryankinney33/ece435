@@ -41,3 +41,26 @@ END DATA
        In the second packet, the Pi tells the Macbook that the packet was received.
        In the third packet, the Pi sends the capitalized stringe "HI" to the Macbook Air.
        In the fourth packet, the Macbook tells the Pi that it has received the packet.
+
+4.
+    a. Do not need to worry about the tcp/CLOSE-WAIT connections because the remote end has
+       shutdown the connection and the computer is waiting for a termination request.
+
+    b. The tcp/ESTAB connections are the open two-way connections in-which data is being
+       communicated. These are likely candidates for the high activity.
+
+    c. The tcp/SYN-RECV connections are incoming connections that have not been ACK'd yet.
+       These are also possible candidates for the high activity.
+
+    d. The tcp/TIME-WAIT do not need to be worried about. They have already closed and are
+       waiting around to handle any delayed packets.
+
+    e. The udp/UNCONN are closed connections and do not need to be worried about.
+
+    f. The tcp/LISTEN connections are waiting for an incoming connection and are not transmitting
+       data. Do not worry about them.
+
+5.
+	What probably happened is a ton of packets are being dropped. If there is a lot of congestion
+	on the network, then packet loss is common. With TCP, the packets would need to be resent and
+	could possibly be getting dropped again.
