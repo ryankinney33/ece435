@@ -8,23 +8,36 @@ BEGIN TCP HEADER	Name of Field    Decoded Value
 0x0024: 0050		Dest. Port       80
 0x0026: cdc4 6a49	Sequence Num     3452201545
 0x002a: 3c7b 6ca5	ACK Number       1014721701
-0x002e: 80		Offset/Reserved  8*4 = 32 bytes
-0x002f: 18		Flags            NS = 0; CWR = 0; ECE = 0; URG = 0; ACK = 1; PSH = 1; RST = 0; SYN = 0; FIN = 0
+0x002e: 80  		Offset/Reserved  8*4 = 32 bytes
+0x002f: 18  		Flags            NS = 0; CWR = 0; ECE = 0; URG = 0; ACK = 1; PSH = 1; RST = 0; SYN = 0; FIN = 0
 0x0030: 00e5		Window Size      229 bytes
 0x0032: 79f4		Checksum         31220
 0x0034: 0000		Urgent Pointer   0
-0x0036: 01		Options
-0x0037: 01		Options
-0x0038: 080a		Options
-0x003a: 0104 3e58
-0x003e: 34a8 7bc3
+0x0036: 01  		Options		 NOP (type = 1)
+0x0037: 01  		Options		 NOP (type = 1)
+0x0038: 080a		Options		 Timestamp (type = 8, len = 10)
+0x003a: 0104 3e58	Options		 Timestamp value = 17055320
+0x003e: 34a8 7bc3	Options		 Timestamp echo reply = 883456963
 END TCP HEADER
 BEGIN DATA
 0x0042: 4745 540a	Data?            GET'\n'
 END DATA
 
 2.
-	a. A webserver, considering the port was port 80.
-	b. 
+    a. A webserver, considering the port was port 80.
+
+    b. The useful data was 4 bytes and the whole packet was 70 bytes.
+       Therefore, 4/70 or 5.714% of the packet was useful data and the rest
+       was overhead.
 
 3.
+    a. The Macbook Air connected to the Pi and the TCP Three-way handshake happened.
+       This can be seen from the sequence and ACK numbers, along with the flags.
+       The Macbook Air connects to the Pi and sends SYN with a random sequence number X.
+       The Pi responded sending ACK = X+1 and SYN with seq = random number Y.
+       The Macbook responded with seq = X+1 and ACK Y+1.
+
+    b. In the first packet, the Macbook sent the "Hi" to the Pi.
+       In the second packet, the Pi tells the Macbook that the packet was received.
+       In the third packet, the Pi sends the capitalized stringe "HI" to the Macbook Air.
+       In the fourth packet, the Macbook tells the Pi that it has received the packet.
