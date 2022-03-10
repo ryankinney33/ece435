@@ -16,3 +16,7 @@ BEGIN IPv4 HEADER	Name of Field		 Decoded Value
 0x001a: c0a8 0833	Source address		 192.168.8.51
 0x001e: 826f 2e7f	Destination Address	 130.111.46.127
 END IPv4 HEADER
+
+2.
+	All four are valid IPv4 addresses. IPv4 addresses are 32 bit numbers written
+	in decimal, hex, or dotted decimal.
