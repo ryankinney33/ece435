@@ -20,3 +20,9 @@ END IPv4 HEADER
 2.
 	All four are valid IPv4 addresses. IPv4 addresses are 32 bit numbers written
 	in decimal, hex, or dotted decimal.
+
+3.
+	Ford owned IPv4 addresses starting that start with 19. Therefore, they owned:
+	19/256 = 0.07421875 = 7.421875%
+
+
