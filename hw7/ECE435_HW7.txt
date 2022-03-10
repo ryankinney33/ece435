@@ -1,0 +1,18 @@
+ECE435 HW#7 -- Spring 2022
+
+Name: Ryan Kinney
+
+1.
+BEGIN IPv4 HEADER	Name of Field		 Decoded Value
+0x000e: 4   		Version     		 Version 4
+0x000e: 5   		Header Length		 5*4 = 20 bytes
+0x000f: 00  		Type of Service		 Precedence = routine; Type of service = normal
+0x0010: 0038		Total Length		 56 bytes
+0x0012: 572a		Identification		 0x572a (22314 in decimal)
+0x0014: 4000		Flags       		 Packet isn't evil, don't fragment, last fragment
+0x0016: 40  		Time-to-live		 64 hops
+0x0017: 06  		Protocol    		 TCP
+0x0018: 69cc		Header checksum		 0x69cc (27084)
+0x001a: c0a8 0833	Source address		 192.168.8.51
+0x001e: 826f 2e7f	Destination Address	 130.111.46.127
+END IPv4 HEADER
