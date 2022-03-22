@@ -9,7 +9,7 @@ BEGIN IPv4 HEADER	Name of Field		 Decoded Value
 0x000f: 00  		Type of Service		 Precedence = routine; Type of service = normal
 0x0010: 0038		Total Length		 56 bytes
 0x0012: 572a		Identification		 0x572a (22314 in decimal)
-0x0014: 4000		Flags       		 Packet isn't evil, don't fragment, last fragment
+0x0014: 4000		Flags       		 Packet probably isn't evil, don't fragment, last fragment
 0x0016: 40  		Time-to-live		 64 hops
 0x0017: 06  		Protocol    		 TCP
 0x0018: 69cc		Header checksum		 0x69cc (27084)
@@ -18,11 +18,20 @@ BEGIN IPv4 HEADER	Name of Field		 Decoded Value
 END IPv4 HEADER
 
 2.
-	All four are valid IPv4 addresses. IPv4 addresses are 32 bit numbers written
-	in decimal, hex, or dotted decimal.
+	123.267.67.44 is not a valid IPv4 address. The other 3 are valid (the last two are the same address too).
 
 3.
 	Ford owned IPv4 addresses starting that start with 19. Therefore, they owned:
 	19/256 = 0.07421875 = 7.421875%
 
+4.
+	a.
+		24 leading bits in mask, therefore the mask is 255.255.255.0
+	b.
+		192.168.13.
+	c.
+		192.168.13.
 
+5.
+	a.
+	b.
