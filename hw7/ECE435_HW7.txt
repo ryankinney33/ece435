@@ -21,17 +21,19 @@ END IPv4 HEADER
 	123.267.67.44 is not a valid IPv4 address. The other 3 are valid (the last two are the same address too).
 
 3.
-	Ford owned IPv4 addresses starting that start with 19. Therefore, they owned:
-	19/256 = 0.07421875 = 7.421875%
+	Ford owned all IPv4 addresses with the most significant byte as 19. There are 256 possible values for the
+	most significant byte, so ford owns: 1/256 = 0.390625% of the IPv4 address space.
 
 4.
 	a.
 		24 leading bits in mask, therefore the mask is 255.255.255.0
 	b.
-		192.168.13.
+		192.168.13.0, but some devices might not behave well with it, but 192.168.13.1 would work.
 	c.
-		192.168.13.
+		192.168.13.254 because 192.168.13.255 is the broadcast address.
 
 5.
 	a.
+		The first hop is the default gateway of 192.168.8.2
 	b.
+		The packet is sent directly as the destination is on the local network.
