@@ -56,27 +56,18 @@ END IPv4 HEADER
 		 iv. Not a valid IPv6 address; IPv4 and IPv6 addresses are not compatible
 	b.
 BEGIN IPv6 HEADER	Name of Field		Decoded Value
-0x000e: 6    		Version			IPv6
-0x000f: 00  		Traffic Class		
-0x0010: 2 2619  	Flow label		
+0x000e: 6    		Version     		IPv6
+0x000f: 00  		Traffic Class		Traffic Class 0
+0x0010: 2 2619  	Flow label  		Flow label: 0x22618
 0x0012: 0031		Payload Length		49 bytes
-0x0014: 11  		Next Header		
-0x0015: 40  		Hop Limit		64 hops
+0x0014: 11  		Next Header 		UDP
+0x0015: 40  		Hop Limit   		64 hops
 0x0016: 2610 0048	Source Address		2610:48:100:8da:230:18ff:feab:1c39
-        0100 08da	
-        0230 18ff	
-        feab 1c39	
+        0100 08da
+        0230 18ff
+        feab 1c39
 0x0026: 2001 4860	Destination Address	2001:4860:4860::8844
-        4860 0000	
-        0000 0000	
-        0000 8844	
+        4860 0000
+        0000 0000
+        0000 8844
 END IPv6 HEADER
-
-
-8875 563d 2a80 0030 18ab 1c39 86dd 6002
-2618 0031 1140 2610 0048 0100 08da 0230
-18ff feab 1c39 2001 4860 4860 0000 0000
-0000 0000 8844 e239 0035 0031 9c0e 8657
-0120 0001 0000 0000 0001 0377 7777 0465
-7370 6e03 636f 6d00 0001 0001 0000 2910
-0000 0000 0000 00
