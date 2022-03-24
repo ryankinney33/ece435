@@ -3,18 +3,18 @@ ECE435 HW#7 -- Spring 2022
 Name: Ryan Kinney
 
 1.
-BEGIN IPv4 HEADER	Name of Field		 Decoded Value
-0x000e: 4   		Version     		 Version 4
-0x000e: 5   		Header Length		 5*4 = 20 bytes
-0x000f: 00  		Type of Service		 Precedence = routine; Type of service = normal
-0x0010: 0038		Total Length		 56 bytes
-0x0012: 572a		Identification		 0x572a (22314 in decimal)
-0x0014: 4000		Flags       		 Packet probably isn't evil, don't fragment, last fragment
-0x0016: 40  		Time-to-live		 64 hops
-0x0017: 06  		Protocol    		 TCP
-0x0018: 69cc		Header checksum		 0x69cc (27084)
-0x001a: c0a8 0833	Source address		 192.168.8.51
-0x001e: 826f 2e7f	Destination Address	 130.111.46.127
+BEGIN IPv4 HEADER	Name of Field		Decoded Value
+0x000e: 4   		Version     		IPv4
+0x000e: 5   		Header Length		5*4 = 20 bytes
+0x000f: 00  		Type of Service		Precedence = routine; Type of service = normal
+0x0010: 0038		Total Length		56 bytes
+0x0012: 572a		Identification		0x572a (22314 in decimal)
+0x0014: 4000		Flags       		Packet probably isn't evil, don't fragment, last fragment
+0x0016: 40  		Time-to-live		64 hops
+0x0017: 06  		Protocol    		TCP
+0x0018: 69cc		Header checksum		0x69cc (27084)
+0x001a: c0a8 0833	Source address		192.168.8.51
+0x001e: 826f 2e7f	Destination Address	130.111.46.127
 END IPv4 HEADER
 
 2.
@@ -37,3 +37,46 @@ END IPv4 HEADER
 		The first hop is the default gateway of 192.168.8.2
 	b.
 		The packet is sent directly as the destination is on the local network.
+6.
+	a.
+		The average round-trip packet time was 19.7 ms.
+	b.
+		The hostname that responded was not google.com, but lga34s39-in-f4.1e100.net.
+		This is probably just 1 of Google's numerous servers.
+7.
+	a.
+		There were a total of 4 hops
+	b.
+		There was a total of 7 hops and the times did go up for each further hop. 8.
+9.
+	a.
+		  i. Is a valid IPv6 address
+		 ii. Is a valid IPv6 address
+		iii. Not a valid IPv6 address; can't drop more than 1 group of zeros
+		 iv. Not a valid IPv6 address; IPv4 and IPv6 addresses are not compatible
+	b.
+BEGIN IPv6 HEADER	Name of Field		Decoded Value
+0x000e: 6    		Version			IPv6
+0x000f: 00  		Traffic Class		
+0x0010: 2 2619  	Flow label		
+0x0012: 0031		Payload Length		49 bytes
+0x0014: 11  		Next Header		
+0x0015: 40  		Hop Limit		64 hops
+0x0016: 2610 0048	Source Address		2610:48:100:8da:230:18ff:feab:1c39
+        0100 08da	
+        0230 18ff	
+        feab 1c39	
+0x0026: 2001 4860	Destination Address	2001:4860:4860::8844
+        4860 0000	
+        0000 0000	
+        0000 8844	
+END IPv6 HEADER
+
+
+8875 563d 2a80 0030 18ab 1c39 86dd 6002
+2618 0031 1140 2610 0048 0100 08da 0230
+18ff feab 1c39 2001 4860 4860 0000 0000
+0000 0000 8844 e239 0035 0031 9c0e 8657
+0120 0001 0000 0000 0001 0377 7777 0465
+7370 6e03 636f 6d00 0001 0001 0000 2910
+0000 0000 0000 00
