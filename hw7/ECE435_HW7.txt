@@ -22,7 +22,7 @@ END IPv4 HEADER
 
 3.
 	Ford owned all IPv4 addresses with the most significant byte as 19. There are 256 possible values for the
-	most significant byte, so ford owns: 1/256 = 0.390625% of the IPv4 address space.
+	most significant byte, so ford owned: 1/256 = 0.390625% of the IPv4 address space.
 
 4.
 	a.
@@ -42,12 +42,20 @@ END IPv4 HEADER
 		The average round-trip packet time was 19.7 ms.
 	b.
 		The hostname that responded was not google.com, but lga34s39-in-f4.1e100.net.
-		This is probably just 1 of Google's numerous servers.
+		This is probably just one of Google's numerous servers.
 7.
 	a.
-		There were a total of 4 hops
+		There were a total of 4 hops. All the hops seem to be internal to the UMaine network.
 	b.
-		There was a total of 7 hops and the times did go up for each further hop. 8.
+		There was a total of 7 hops and the times did go up for each further hop.
+8.
+	a.
+		It is unusual for a local address like 192.168.8.38 to connect to public ip 8.8.8.8 (Google's DNS server).
+		The likely reason this is working is due to a NAT translating the private address to a public address.
+	b.
+		The NAT firewall has no way of knowing whether or not a UDP connection is still needed. Tracking whether or
+		not the UDP packet has been replied to is one method that can be used to determine if the NAT rule needs to
+		be held on to.
 9.
 	a.
 		  i. Is a valid IPv6 address
@@ -71,3 +79,18 @@ BEGIN IPv6 HEADER	Name of Field		Decoded Value
         0000 0000
         0000 8844
 END IPv6 HEADER
+
+10.
+	a.
+		 i.
+			The 7th hop crosses the Atlantic Ocean. This is the hop where the time increased significantly.
+		ii.
+			New York City; the hostname contains newy, which is probably New York.
+	b.
+		 i.
+			The available machines and routing are different for the IPv6 network and IPv4 network, which
+			would cause the number of hops to be different.
+		ii.
+			The latency was worse when using IPv6. This could be due to IPv4 having more available routes when
+			compared to the IPv6 network. Another possible cause is if the IPv6 route involves a translation
+			from IPv6 to IPv4 somewhere along the path.
