@@ -1,0 +1,21 @@
+ECE435 HW#8 -- Spring 2022
+
+Name: Ryan Kinney
+
+1.
+	a.
+		dB = 10*log10(25) = 13.9794
+	b.
+		S/N: 17 = 10*log10(S/N) ==> S/N = 10^(17/10) = 50.1187
+		bps = 100e6*log2(1 + 50.1187) = 5.64728e8
+		Maximum transmission speed = 5.647 Mbps
+2.
+	a.
+		It uses fewer repeaters, has lower corrosion rates. Fiber is also immune
+		to power surges and power failures. For example, if the line gets hit by
+		lightning, fiber will not have a power surge.
+	b.
+	c.
+
+3.
+	a.
