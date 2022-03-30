@@ -51,7 +51,7 @@ int init_display() {
 	return 0;
 }
 
-int end_display() {
+void end_display() {
 	// Simply cleans up the window to fix the terminal in case of some deadly
 	// signals
 	endwin();

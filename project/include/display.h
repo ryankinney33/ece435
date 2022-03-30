@@ -12,10 +12,10 @@
 #define LIGHT_FG COLOR_BLUE
 #define DARK_FG COLOR_RED
 
-#define LIGHT_BG COLOR_WHITE
-#define DARK_BG COLOR_BLACK
+#define LIGHT_BG COLOR_BLACK
+#define DARK_BG COLOR_MAGENTA
 
 int init_display();
-int end_display();
+void end_display();
 
 #endif /* DISPLAY_H */
