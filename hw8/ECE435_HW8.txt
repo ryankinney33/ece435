@@ -4,9 +4,9 @@ Name: Ryan Kinney
 
 1.
 	a.
-		dB = 10*log10(25) = 13.9794
+		S/N_dB = 10*log10(25) = 13.9794 dB.
 	b.
-		S/N: 17 = 10*log10(S/N) ==> S/N = 10^(17/10) = 50.1187
+		S/N_dB = 17 dB = 10*log10(S/N) ==> S/N = 10^(17/10) = 50.1187
 		bps = 100e6*log2(1 + 50.1187) = 5.64728e8
 		Maximum transmission speed = 5.647 Mbps
 2.
@@ -15,7 +15,14 @@ Name: Ryan Kinney
 		to power surges and power failures. For example, if the line gets hit by
 		lightning, fiber will not have a power surge.
 	b.
+		Long distance communications are easier. For example, a 1000+ mile long
+		trench may need to be dug and maintained or the same could be accomplished
+		with only a few sattelites. 
 	c.
+		Fiber is less affected by weather. For example, rain can greatly diminish
+		the signal quality and even make it impossible to receive.
 
 3.
 	a.
+		This is technically possible, but not a good idea. The government,
+		(FCC in the US) will get angry.
