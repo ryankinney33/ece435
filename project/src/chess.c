@@ -1,35 +1,35 @@
 #include <ncurses.h>
 
-#define WHITE_BG 1
-#define BLACK_BG 2
+// Macros for colors
+#define WHITE_NO 1 // light bg, no piece
+#define BLACK_NO 2 // dark bg, no piece
+#define WHITE_BL 3 // light bg, dark piece
+#define BLACK_BL 4 // dark bg, dark piece
+#define WHITE_WH 5 // light bg, light piece
+#define BLACK_WH 6 // dark bg, light piece
 
-static int display_grid() {
+#define LIGHT_FG COLOR_BLUE
+#define DARK_FG COLOR_RED
+
+#define LIGHT_BG COLOR_WHITE
+#define DARK_BG COLOR_BLACK
+
+
+static void display_grid() {
 	clear();
-/*	printw("8         8\n");
-	printw("7         7\n");
-	printw("6         6\n");
-	printw("5         5\n");
-	printw("4         4\n");
-	printw("3         3\n");
-	printw("2         2\n");
-	printw("1         1\n");
-	printw("  ABCDEFGH");
-*/
 	for (int i = 8; i > 0; --i) {
 		printw("%d ", i);
 		for (int j = 0; j < 8; ++j) {
 			int color = ((j+i) & 1) + 1;
-			printf("color: %d\r\n", color);
 			attron(COLOR_PAIR(color));
-			printw(" ");
-			attroff(COLOR_PAIR(color));
+			printw("~");
+			attroff(COLOR_PAIR(color++));
 		}
 		printw(" %d\n", i);
 	}
 
-	printw("  ABCDEFGH");
+	printw("  ABCDEFGH\n\n");
 	refresh();
-	return 0;
 }
 
 static int init_colors() {
@@ -39,8 +39,12 @@ static int init_colors() {
 	}
 
 	start_color();
-	init_pair(WHITE_BG, COLOR_WHITE, COLOR_WHITE);
-	init_pair(BLACK_BG, COLOR_BLACK, COLOR_BLACK);
+	init_pair(WHITE_NO, LIGHT_BG, LIGHT_BG); // FG color doesnt matter
+	init_pair(BLACK_NO, DARK_BG, DARK_BG); // FG color doesnt matter
+	init_pair(WHITE_BL, DARK_FG, LIGHT_BG);
+	init_pair(BLACK_BL, DARK_FG, DARK_BG);
+	init_pair(WHITE_WH, LIGHT_FG, LIGHT_BG);
+	init_pair(BLACK_WH, LIGHT_FG, DARK_BG);
 
 	return 0;
 }
@@ -48,7 +52,7 @@ static int init_colors() {
 int main () {
 	// Start curses mode
 	initscr();
-	curs_set(0);
+	//curs_set(0);
 	if (init_colors()) {
 		fprintf(stderr, "Error: your terminal does not support color.\n");
 		return 1;
