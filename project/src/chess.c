@@ -15,12 +15,6 @@ static int init_piece(struct chess_piece *piece, enum team_color color,
 	// Set the information for the piece
 	piece->color = color;
 	piece->id = type;
-	if (color == white) {
-		piece->fg_color = LIGHT_FG;
-	} else {
-		piece->fg_color = DARK_FG;
-	}
-
 	return 0;
 }
 

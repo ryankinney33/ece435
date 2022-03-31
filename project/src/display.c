@@ -1,7 +1,7 @@
 #include <ncurses.h>
 #include "display.h"
 
-// Macros for colors
+// Macros for the colors
 #define BLACK_NO 1 // dark bg, no piece
 #define WHITE_NO 2 // light bg, no piece
 #define BLACK_BL 3 // dark bg, dark piece
@@ -9,10 +9,15 @@
 #define BLACK_WH 5 // dark bg, light piece
 #define WHITE_WH 6 // light bg, light piece
 
-#define LIGHT_FG COLOR_WHITE
-#define DARK_FG COLOR_RED
-#define LIGHT_BG COLOR_GREEN
-#define DARK_BG COLOR_BLACK
+#define LIGHT_FG 255 // Bright white
+#define DARK_FG 9 // A bright red
+#define LIGHT_BG 236 // A gray color
+#define DARK_BG 0 // Black
+
+#define LIGHT_FG8 COLOR_WHITE
+#define DARK_FG8 COLOR_RED
+#define LIGHT_BG8 COLOR_GREEN
+#define DARK_BG8 COLOR_BLACK
 
 static void display_grid() {
 	clear();
@@ -55,20 +60,24 @@ static int init_colors() {
 	}
 
 	start_color();
-
-	// Modify the colors for a better appearance if possible
-	if (can_change_color()) {
-		//init_color(DARK_BG, 0, 0, 0); // Make black actually look black
-		//init_color(LIGHT_BG, 127, 127, 127); // Is actually a gray
+	if (COLORS >= 256) {
+		// revert to older colors
+		// use 256 color mode
+		init_pair(WHITE_NO, LIGHT_BG, LIGHT_BG); // FG color doesnt matter
+		init_pair(BLACK_NO, DARK_BG, DARK_BG); // FG color doesnt matter
+		init_pair(WHITE_BL, DARK_FG, LIGHT_BG);
+		init_pair(BLACK_BL, DARK_FG, DARK_BG);
+		init_pair(WHITE_WH, LIGHT_FG, LIGHT_BG);
+		init_pair(BLACK_WH, LIGHT_FG, DARK_BG);
+	} else {
+		// revert to default 8 color mode
+		init_pair(WHITE_NO, LIGHT_BG8, LIGHT_BG8); // FG color doesnt matter
+		init_pair(BLACK_NO, DARK_BG8, DARK_BG8); // FG color doesnt matter
+		init_pair(WHITE_BL, DARK_FG8, LIGHT_BG8);
+		init_pair(BLACK_BL, DARK_FG8, DARK_BG8);
+		init_pair(WHITE_WH, LIGHT_FG8, LIGHT_BG8);
+		init_pair(BLACK_WH, LIGHT_FG8, DARK_BG8);
 	}
-
-	// Initialize the color pairs
-	init_pair(WHITE_NO, LIGHT_BG, LIGHT_BG); // FG color doesnt matter
-	init_pair(BLACK_NO, DARK_BG, DARK_BG); // FG color doesnt matter
-	init_pair(WHITE_BL, DARK_FG, LIGHT_BG);
-	init_pair(BLACK_BL, DARK_FG, DARK_BG);
-	init_pair(WHITE_WH, LIGHT_FG, LIGHT_BG);
-	init_pair(BLACK_WH, LIGHT_FG, DARK_BG);
 
 	return 0;
 }

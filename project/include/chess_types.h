@@ -29,7 +29,6 @@ struct chess_piece {
 	enum piece_type id;
 	enum team_color color;
 
-	int fg_color; // the text color of the piece
 	char *print_char; // the text to be printed for the piece
 };
 
