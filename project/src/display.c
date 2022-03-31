@@ -21,10 +21,10 @@ static void display_grid() {
 		move(3*i + 1, 0);
 		printw("%d", 8 - i);
 		for (int j = 0; j < 8; ++j) {
-			int color = ((j+i) & 1) + 1;
+			//int color = ((j+i) & 1) + 1;
 			// Set cursor position
 			// y position is 3*row
-			// x position is 3*col
+			// x position is 5*col
 			move(3*i, 5*j + 3);
 			attron(COLOR_PAIR(color));
 			printw("AAAAA");
@@ -38,7 +38,7 @@ static void display_grid() {
 				color = 1;
 			}
 		}
-		move(3*i + 1, 45); // 1 space after the edge of the grid
+		move(3*i + 1, 45); // 2 space after the edge of the grid
 		printw("%d", 8 - i);
 	}
 
@@ -58,8 +58,8 @@ static int init_colors() {
 
 	// Modify the colors for a better appearance if possible
 	if (can_change_color()) {
-		init_color(DARK_BG, 0, 0, 0); // Make black actually look black
-		init_color(LIGHT_BG, 127, 127, 127); // Is actually a gray
+		//init_color(DARK_BG, 0, 0, 0); // Make black actually look black
+		//init_color(LIGHT_BG, 127, 127, 127); // Is actually a gray
 	}
 
 	// Initialize the color pairs
