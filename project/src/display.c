@@ -1,20 +1,50 @@
 #include <ncurses.h>
 #include "display.h"
 
+// Macros for colors
+#define BLACK_NO 1 // dark bg, no piece
+#define WHITE_NO 2 // light bg, no piece
+#define BLACK_BL 3 // dark bg, dark piece
+#define WHITE_BL 4 // light bg, dark piece
+#define BLACK_WH 5 // dark bg, light piece
+#define WHITE_WH 6 // light bg, light piece
+
+#define LIGHT_FG COLOR_WHITE
+#define DARK_FG COLOR_RED
+#define LIGHT_BG COLOR_GREEN
+#define DARK_BG COLOR_BLACK
+
 static void display_grid() {
 	clear();
-	for (int i = 8; i > 0; --i) {
-		printw("%d ", i);
+	int color = 1;
+	for (int i = 0; i < 8; ++i) {
+		move(3*i + 1, 0);
+		printw("%d", 8 - i);
 		for (int j = 0; j < 8; ++j) {
 			int color = ((j+i) & 1) + 1;
+			// Set cursor position
+			// y position is 3*row
+			// x position is 3*col
+			move(3*i, 5*j + 3);
 			attron(COLOR_PAIR(color));
-			printw("~");
-			attroff(COLOR_PAIR(color++));
+			printw("AAAAA");
+			move(3*i + 1, 5*j + 3);
+			printw("AAAAA");
+			move(3*i + 2, 5*j + 3);
+			printw("AAAAA");
+
+			attroff(COLOR_PAIR(color));
+			if (++color > 6) {
+				color = 1;
+			}
 		}
-		printw(" %d\n", i);
+		move(3*i + 1, 45); // 1 space after the edge of the grid
+		printw("%d", 8 - i);
 	}
 
-	printw("  ABCDEFGH\n\n");
+	move(25, 5);
+	printw("A    B    C    D    E    F    G    H\n\n");
+	printw("Please enter your move: ");
 	refresh();
 }
 
@@ -25,6 +55,14 @@ static int init_colors() {
 	}
 
 	start_color();
+
+	// Modify the colors for a better appearance if possible
+	if (can_change_color()) {
+		init_color(DARK_BG, 0, 0, 0); // Make black actually look black
+		init_color(LIGHT_BG, 127, 127, 127); // Is actually a gray
+	}
+
+	// Initialize the color pairs
 	init_pair(WHITE_NO, LIGHT_BG, LIGHT_BG); // FG color doesnt matter
 	init_pair(BLACK_NO, DARK_BG, DARK_BG); // FG color doesnt matter
 	init_pair(WHITE_BL, DARK_FG, LIGHT_BG);
@@ -38,6 +76,7 @@ static int init_colors() {
 int init_display() {
 	// Start curses mode
 	initscr();
+
 	//curs_set(0);
 	if (init_colors()) {
 		fprintf(stderr, "Error: your terminal does not support color.\n");
