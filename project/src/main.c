@@ -9,9 +9,7 @@
 #include "chess.h"
 #include <ncurses.h>
 
-extern struct chess_piece board[8][8]; // the chess grid
-
-static void cleanup() {
+static void crash_cleanup() {
 	end_display();
 	fprintf(stderr, "Deadly signal arrived. Dyin...\n");
 	exit(EXIT_FAILURE);
@@ -22,7 +20,7 @@ int main() {
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
 
-	act.sa_handler = cleanup;
+	act.sa_handler = crash_cleanup;
 	sigaction(SIGINT, &act, 0);
 	sigaction(SIGABRT, &act, 0);
 	sigaction(SIGILL, &act, 0);
@@ -31,12 +29,17 @@ int main() {
 	sigaction(SIGBUS, &act, 0);
 	sigaction(SIGTERM, &act, 0);
 
-	init_board(1, white);
-
+	struct chess_board *board = init_board(1, 1, white);
+	if (board == NULL) {
+		perror("init_board");
+		end_display();
+		return 1;
+	}
 	init_display();
-	display_board(board);
+	display_board(board->grid);
 	getch();
-	endwin();
+	end_display();
+	board = destroy_board(board);
 //	init_team(team_white, 1, white);
 //	init_team(team_black, 1, black);
 
