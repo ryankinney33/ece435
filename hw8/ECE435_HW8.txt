@@ -26,5 +26,7 @@ Name: Ryan Kinney
 		strength in the fiber line.
 3.
 	a.
-		This is technically possible, but not a good idea. The government,
-		(FCC in the US) will get angry.
+		This is technically possible, but not a good idea. Some satellites use
+		this band for communication (this is the C-band) and the owners of a
+		sattelite using this band will be upset with the interference from the
+		transmitter.
