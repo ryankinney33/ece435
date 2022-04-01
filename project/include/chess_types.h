@@ -1,8 +1,6 @@
 #ifndef CHESS_TYPES_H
 #define CHESS_TYPES_H
 
-#include <stdint.h>
-
 // The 6 different types of pieces (and deceased)
 enum piece_type {
 	pawn,
@@ -29,7 +27,8 @@ struct chess_piece {
 	enum piece_type id;
 	enum team_color color;
 
-	char *print_char; // the text to be printed for the piece
+	char print_char[4]; // the text to be printed for the piece
+
 };
 
 #endif /* CHESS_TYPES_H */

@@ -21,12 +21,11 @@
 
 static void display_grid() {
 	clear();
-	int color = 1;
 	for (int i = 0; i < 8; ++i) {
 		move(3*i + 1, 0);
 		printw("%d", 8 - i);
 		for (int j = 0; j < 8; ++j) {
-			//int color = ((j+i) & 1) + 1;
+			int color = ((j+i+1) & 1) + 1;
 			// Set cursor position
 			// y position is 3*row
 			// x position is 5*col
@@ -39,9 +38,6 @@ static void display_grid() {
 			printw("AAAAA");
 
 			attroff(COLOR_PAIR(color));
-			if (++color > 6) {
-				color = 1;
-			}
 		}
 		move(3*i + 1, 45); // 2 space after the edge of the grid
 		printw("%d", 8 - i);

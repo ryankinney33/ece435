@@ -1,7 +1,8 @@
 #include <stddef.h>
-#include "chess.h"
-#include "display.h"
 #include <errno.h>
+#include <string.h>
+
+#include "chess.h"
 
 struct chess_piece board[8][8]; // grid of chess pieces
 
@@ -15,7 +16,57 @@ static int init_piece(struct chess_piece *piece, enum team_color color,
 	// Set the information for the piece
 	piece->color = color;
 	piece->id = type;
-	return 0;
+
+	// Copy the characters into the string
+	if (type == dead) {
+		strcpy(piece->print_char, " ");
+		return 0;
+	}
+
+	if (color == black) {
+		switch (type) {
+			case king:
+				strcpy(piece->print_char, "\u265a");
+				return 0;
+			case queen:
+				strcpy(piece->print_char, "\u265b");
+				return 0;
+			case rook:
+				strcpy(piece->print_char, "\u265c");
+				return 0;
+			case bishop:
+				strcpy(piece->print_char, "\u265d");
+				return 0;
+			case knight:
+				strcpy(piece->print_char, "\u265e");
+				return 0;
+			default: // pawn
+				strcpy(piece->print_char, "\u265f");
+				return 0;
+		}
+	}
+
+	// white pieces
+	switch (type) {
+		case king:
+			strcpy(piece->print_char, "\u2654");
+			return 0;
+		case queen:
+			strcpy(piece->print_char, "\u2655");
+			return 0;
+		case rook:
+			strcpy(piece->print_char, "\u2656");
+			return 0;
+		case bishop:
+			strcpy(piece->print_char, "\u2657");
+			return 0;
+		case knight:
+			strcpy(piece->print_char, "\u2658");
+			return 0;
+		default: // pawn
+			strcpy(piece->print_char, "\u2659");
+			return 0;
+	}
 }
 
 int init_board(int has_color, enum team_color player) {
