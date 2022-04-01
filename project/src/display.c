@@ -48,8 +48,8 @@ static int init_colors();
 void display_board(const struct chess_piece board[][8]) {
 	clear();
 	for (int i = 0; i < 8; ++i) {
-		move(3*i + 1, 0);
-		printw("%d", 8 - i);
+		//move(3*i + 1, 0);
+		printw("%d ", 8 - i);
 		for (int j = 0; j < 8; ++j) {
 			int color = ((i + j + 1) & 1) + 1; // first the bg color
 			color |= board[7 - i][7 - j].color << 2;
@@ -57,22 +57,23 @@ void display_board(const struct chess_piece board[][8]) {
 			// Set cursor position
 			// y position is 3*row
 			// x position is 5*col
-			move(3*i, 5*j + 3);
+			//move(3*i, 5*j + 3);
 			attron(COLOR_PAIR(color));
-			printw("     ");
-			move(3*i + 1, 5*j + 3);
-			printw("  %s  ", board[i][j].print_char);
-			move(3*i + 2, 5*j + 3);
-			printw("     ");
+			//printw("     ");
+			//move(3*i + 1, 5*j + 3);
+		//	printw("  %s  ", board[i][j].print_char);
+			printw("%s", board[i][j].print_char);
+			//move(3*i + 2, 5*j + 3);
+			//printw("     ");
 
 			attroff(COLOR_PAIR(color));
 		}
-		move(3*i + 1, 45); // 2 space after the edge of the grid
-		printw("%d", 8 - i);
+		//move(3*i + 1, 45); // 2 space after the edge of the grid
+		printw(" %d\n", 8 - i);
 	}
 
-	move(25, 5);
-	printw("A    B    C    D    E    F    G    H\n\n");
+	//move(25, 5);
+	printw("  ABCDEFGH\n\n");
 	printw("Please enter your move: ");
 	refresh();
 }

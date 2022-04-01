@@ -17,54 +17,28 @@ static int init_piece(struct chess_piece *piece, enum team_color color,
 	piece->color = color;
 	piece->id = type;
 
-	// Copy the characters into the string
-	if (type == dead) {
-		strcpy(piece->print_char, " ");
-		return 0;
-	}
-
-	if (color == black) {
-		switch (type) {
-			case king:
-				strcpy(piece->print_char, "\u265a");
-				return 0;
-			case queen:
-				strcpy(piece->print_char, "\u265b");
-				return 0;
-			case rook:
-				strcpy(piece->print_char, "\u265c");
-				return 0;
-			case bishop:
-				strcpy(piece->print_char, "\u265d");
-				return 0;
-			case knight:
-				strcpy(piece->print_char, "\u265e");
-				return 0;
-			default: // pawn
-				strcpy(piece->print_char, "\u265f");
-				return 0;
-		}
-	}
-
-	// white pieces
+	// Write the piece color
 	switch (type) {
 		case king:
-			strcpy(piece->print_char, "\u2654");
+			strcpy(piece->print_char, "\u265a");
 			return 0;
 		case queen:
-			strcpy(piece->print_char, "\u2655");
+			strcpy(piece->print_char, "\u265b");
 			return 0;
 		case rook:
-			strcpy(piece->print_char, "\u2656");
+			strcpy(piece->print_char, "\u265c");
 			return 0;
 		case bishop:
-			strcpy(piece->print_char, "\u2657");
+			strcpy(piece->print_char, "\u265d");
 			return 0;
 		case knight:
-			strcpy(piece->print_char, "\u2658");
+			strcpy(piece->print_char, "\u265e");
 			return 0;
-		default: // pawn
-			strcpy(piece->print_char, "\u2659");
+		case pawn: // pawn
+			strcpy(piece->print_char, "\u265f");
+			return 0;
+		default:
+			strcpy(piece->print_char, " ");
 			return 0;
 	}
 }
