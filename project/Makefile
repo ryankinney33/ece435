@@ -18,7 +18,7 @@ LDLIBS := -lncurses
 all: $(BIN)
 
 $(BIN): $(OBJ)
-	$(CC) $(LDLIBS) $^ $(LDLIBS) -o $@
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
