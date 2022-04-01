@@ -39,6 +39,9 @@
 #define BLACK_WH	0x09 // dark bg, light piece
 #define WHITE_WH	0x0A // light bg, light piece
 
+// Original black color:
+static short orig[3];
+
 // Private functions
 static int init_colors();
 
@@ -81,6 +84,13 @@ static int init_colors() {
 	}
 
 	start_color();
+
+	// possibly change black to look better?
+	if (can_change_color()) {
+		color_content(DARK_BG, &orig[0], &orig[1], &orig[2]);
+		init_color(DARK_BG, 0, 0, 0);
+	}
+
 	if (COLORS >= 256) {
 		// revert to older colors
 		// use 256 color mode
@@ -120,7 +130,12 @@ int init_display() {
 }
 
 void end_display() {
-	// Simply cleans up the window to fix the terminal in case of some deadly
-	// signals
+	// A function to cleanly end the ncurses window
+	// restore colors?
+	if (can_change_color()) {
+		init_color(DARK_BG, orig[0], orig[1], orig[2]);
+		refresh();
+	}
+	// exit the window
 	endwin();
 }
