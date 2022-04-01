@@ -70,19 +70,19 @@ static int init_piece(struct chess_piece *piece, enum team_color color,
 }
 
 int init_board(int has_color, enum team_color player) {
-	// "Player" team color
-	init_piece(&board[7][0], player, rook); // rooks
-	init_piece(&board[7][7], player, rook);
-	init_piece(&board[7][1], player, knight); // knights
-	init_piece(&board[7][6], player, knight);
-	init_piece(&board[7][2], player, bishop); // bishops
-	init_piece(&board[7][5], player, bishop);
-	init_piece(&board[7][3], player, queen); // queen
-	init_piece(&board[7][4], player, king); // king
+	// White color
+	init_piece(&board[0][0], white, rook); // rooks
+	init_piece(&board[0][7], white, rook);
+	init_piece(&board[0][1], white, knight); // knights
+	init_piece(&board[0][6], white, knight);
+	init_piece(&board[0][2], white, bishop); // bishops
+	init_piece(&board[0][5], white, bishop);
+	init_piece(&board[0][3], white, queen); // queen
+	init_piece(&board[0][4], white, king); // king
 
 	// pawns
 	for (int i = 0; i < 8; ++i) {
-		init_piece(&board[6][i], player, pawn);
+		init_piece(&board[1][i], player, pawn);
 	}
 
 	// empty spaces
@@ -92,24 +92,19 @@ int init_board(int has_color, enum team_color player) {
 		}
 	}
 
-	// Other team color
-	if (player == white) {
-		player = black;
-	} else {
-		player = white;
-	}
-	init_piece(&board[0][0], player, rook); // rooks
-	init_piece(&board[0][7], player, rook);
-	init_piece(&board[0][1], player, knight); // knights
-	init_piece(&board[0][6], player, knight);
-	init_piece(&board[0][2], player, bishop); // bishops
-	init_piece(&board[0][5], player, bishop);
-	init_piece(&board[0][3], player, queen); // queen
-	init_piece(&board[0][4], player, king); // king
+	// Black color
+	init_piece(&board[7][0], black, rook); // rooks
+	init_piece(&board[7][7], black, rook);
+	init_piece(&board[7][1], black, knight); // knights
+	init_piece(&board[7][6], black, knight);
+	init_piece(&board[7][2], black, bishop); // bishops
+	init_piece(&board[7][5], black, bishop);
+	init_piece(&board[7][3], black, queen); // queen
+	init_piece(&board[7][4], black, king); // king
 
 	// pawns
 	for (int i = 0; i < 8; ++i) {
-		init_piece(&board[1][i], player, pawn);
+		init_piece(&board[6][i], black, pawn);
 	}
 
 	return 0;

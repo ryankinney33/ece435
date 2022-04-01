@@ -3,9 +3,7 @@
 
 #include "chess_types.h"
 
-
-// Team is assumed to be an array of 16 chess_piece stuctures
-int init_team(struct chess_piece *team, int color_enabled, enum team_color color);
+int init_board(int has_color, enum team_color player);
 
 
 #endif /* CHESS_H */

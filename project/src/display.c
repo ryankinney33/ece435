@@ -1,5 +1,8 @@
 #include <ncurses.h>
+#include <locale.h>
+
 #include "display.h"
+#include "chess_types.h"
 
 // Macros for the colors
 #define LIGHT_FG	255 // Bright white
@@ -37,26 +40,27 @@
 #define WHITE_WH	0x0A // light bg, light piece
 
 // Private functions
-static void display_grid();
 static int init_colors();
 
-static void display_grid() {
+void display_board(const struct chess_piece board[][8]) {
 	clear();
 	for (int i = 0; i < 8; ++i) {
 		move(3*i + 1, 0);
 		printw("%d", 8 - i);
 		for (int j = 0; j < 8; ++j) {
-			int color = ((i + j + 1) & 1) + 1;
+			int color = ((i + j + 1) & 1) + 1; // first the bg color
+			color |= board[7 - i][7 - j].color << 2;
+
 			// Set cursor position
 			// y position is 3*row
 			// x position is 5*col
 			move(3*i, 5*j + 3);
 			attron(COLOR_PAIR(color));
-			printw("AAAAA");
+			printw("     ");
 			move(3*i + 1, 5*j + 3);
-			printw("AAAAA");
+			printw("  %s  ", board[i][j].print_char);
 			move(3*i + 2, 5*j + 3);
-			printw("AAAAA");
+			printw("     ");
 
 			attroff(COLOR_PAIR(color));
 		}
@@ -100,6 +104,9 @@ static int init_colors() {
 }
 
 int init_display() {
+	// Set the locale
+	setlocale(LC_ALL, "");
+
 	// Start curses mode
 	initscr();
 
@@ -108,10 +115,6 @@ int init_display() {
 		fprintf(stderr, "Error: your terminal does not support color.\n");
 		return -1;
 	}
-
-	display_grid();
-	getch(); // wait for user input
-	endwin(); // end curses mode
 
 	return 0;
 }
