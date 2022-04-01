@@ -14,9 +14,9 @@ enum piece_type {
 
 // The 2 different team colors
 enum team_color {
-	white, // may not actually be white and black
-	black,
-	null,
+	null = 0,
+	black = 1,
+	white = 2
 };
 
 // A chess piece
