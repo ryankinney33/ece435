@@ -7,6 +7,7 @@
 
 #include "display.h"
 #include "chess.h"
+#include <ncurses.h>
 
 extern struct chess_piece board[8][8]; // the chess grid
 
@@ -30,7 +31,12 @@ int main() {
 	sigaction(SIGBUS, &act, 0);
 	sigaction(SIGTERM, &act, 0);
 
+	init_board(1, white);
+
 	init_display();
+	display_board(board);
+	getch();
+	endwin();
 //	init_team(team_white, 1, white);
 //	init_team(team_black, 1, black);
 
