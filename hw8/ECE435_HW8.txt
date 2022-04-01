@@ -15,13 +15,15 @@ Name: Ryan Kinney
 		to power surges and power failures. For example, if the line gets hit by
 		lightning, fiber will not have a power surge.
 	b.
-		Long distance communications are easier. For example, a 1000+ mile long
-		trench may need to be dug and maintained or the same could be accomplished
-		with only a few sattelites. 
+		Long distance communications are cheaper and easier. For example, a 1000+ mile
+		long trench around a mountain may need to be dug and maintained or the same
+		connection may be accomplished with only a few sattelites.
 	c.
-		Fiber is less affected by weather. For example, rain can greatly diminish
-		the signal quality and even make it impossible to receive.
-
+		The communication across fiber is more private, as it is harder to be
+		intercepted. Anybody with a dish can intercept the satellite connection,
+		but the same cannot be said for fiber. And even when fiber is successfully
+		tapped into, it is very difficult to do so without weakening the signal
+		strength in the fiber line.
 3.
 	a.
 		This is technically possible, but not a good idea. The government,
