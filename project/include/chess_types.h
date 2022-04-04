@@ -32,9 +32,6 @@ struct chess_piece {
 };
 
 struct chess_board {
-	// Information about colors and text choice
-	int use_color;
-
 	// Information about team and the board
 	enum team_color player_color;
 	struct chess_piece grid[8][8];

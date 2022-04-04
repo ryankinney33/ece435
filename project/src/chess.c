@@ -46,7 +46,7 @@ static void init_piece(struct chess_piece *piece, enum team_color color,
 	}
 }
 
-struct chess_board *init_board(int has_color, int unicode, enum team_color player)
+struct chess_board *init_board(int unicode, enum team_color player)
 {
 	// Sanity check
 	if (player == null)
@@ -60,7 +60,6 @@ struct chess_board *init_board(int has_color, int unicode, enum team_color playe
 
 	// Display information
 	board->player_color = player;
-	board->use_color = has_color;
 
 	// White color
 	init_piece(&board->grid[0][0], white, rook, unicode); // rooks

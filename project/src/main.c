@@ -29,13 +29,13 @@ int main() {
 	sigaction(SIGBUS, &act, 0);
 	sigaction(SIGTERM, &act, 0);
 
-	struct chess_board *board = init_board(1, 0, white);
+	struct chess_board *board = init_board(0, black);
 	if (board == NULL) {
 		fprintf(stderr, "Error: could not create the chess board!\n");
 		end_display();
 		return 1;
 	}
-	init_display(board->use_color);
+	init_display(1);
 	display_board(board);
 	getch();
 	end_display();

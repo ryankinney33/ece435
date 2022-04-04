@@ -3,7 +3,8 @@
 
 #include "chess_types.h"
 
-struct chess_board *init_board(int has_color, int unicode, enum team_color player);
+// Functions related to the beginning and end of the game
+struct chess_board *init_board(int unicode, enum team_color player);
 struct chess_board *destroy_board(struct chess_board *board);
 
 #endif /* CHESS_H */
