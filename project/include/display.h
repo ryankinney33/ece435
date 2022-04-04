@@ -4,7 +4,7 @@
 #include "chess_types.h"
 
 // Functions for display handling
-int init_display();
+int init_display(int use_color);
 void display_board(const struct chess_board *board);
 void end_display();
 

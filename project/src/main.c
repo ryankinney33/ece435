@@ -35,7 +35,7 @@ int main() {
 		end_display();
 		return 1;
 	}
-	init_display();
+	init_display(board->use_color);
 	display_board(board);
 	getch();
 	end_display();

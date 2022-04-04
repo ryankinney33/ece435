@@ -103,11 +103,11 @@ void display_board(const struct chess_board *board) {
 }
 
 static int init_colors() {
+	// Check if colors are supported
 	if (!has_colors()) {
 		endwin();
 		return -1;
 	}
-
 	start_color();
 
 	// possibly change black to look better?
@@ -116,6 +116,7 @@ static int init_colors() {
 		init_color(DARK_BG, 0, 0, 0);
 	}
 
+	// Initialize the color pairs
 	if (COLORS >= 256) {
 		// revert to older colors
 		// use 256 color mode
@@ -138,15 +139,15 @@ static int init_colors() {
 	return 0;
 }
 
-int init_display() {
+int init_display(int use_color) {
 	// Set the locale
 	setlocale(LC_ALL, "");
 
 	// Start curses mode
 	initscr();
 
-	//curs_set(0);
-	if (init_colors()) {
+	// Start color mode (if applicable)
+	if (use_color && init_colors()) {
 		fprintf(stderr, "Error: your terminal does not support color.\n");
 		return -1;
 	}
@@ -157,7 +158,7 @@ int init_display() {
 void end_display() {
 	// A function to cleanly end the ncurses window
 	// restore colors?
-	if (can_change_color()) {
+	if (has_colors() && can_change_color()) {
 		init_color(DARK_BG, orig[0], orig[1], orig[2]);
 		refresh();
 	}
