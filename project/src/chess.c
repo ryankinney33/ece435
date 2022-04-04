@@ -64,9 +64,9 @@ struct chess_board *init_board(int has_color, int unicode, enum team_color playe
 	init_piece(&board->grid[0][3], white, queen); // queen
 	init_piece(&board->grid[0][4], white, king); // king
 
-	// pawns
+	// white pawns
 	for (int i = 0; i < 8; ++i) {
-		init_piece(&board->grid[1][i], player, pawn);
+		init_piece(&board->grid[1][i], white, pawn);
 	}
 
 	// empty spaces
@@ -86,7 +86,7 @@ struct chess_board *init_board(int has_color, int unicode, enum team_color playe
 	init_piece(&board->grid[7][3], black, queen); // queen
 	init_piece(&board->grid[7][4], black, king); // king
 
-	// pawns
+	// black pawns
 	for (int i = 0; i < 8; ++i) {
 		init_piece(&board->grid[6][i], black, pawn);
 	}
