@@ -9,6 +9,6 @@ void end_display();
 void display_board(const struct chess_board *board);
 
 // Getting input from the user
-int get_user_input(char *buffer);
+void get_user_input(char *buffer);
 
 #endif /* DISPLAY_H */

@@ -37,8 +37,14 @@ int main() {
 	}
 	init_display(1);
 	display_board(board);
-	getch();
+
+	char buf[8];
+	get_user_input(buf);
+
 	end_display();
+
+	printf("User entered: %s\n", buf);
+
 	board = destroy_board(board);
 
 	return 0;

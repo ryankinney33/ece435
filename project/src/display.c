@@ -39,67 +39,30 @@
 #define BLACK_WH	0x09 // dark bg, light piece
 #define WHITE_WH	0x0A // light bg, light piece
 
-// Original black color:
-static short orig[3];
+static short orig[3]; // Original black color:
+static int using_colors = 0; // Flag for using colors or not
 
 // Private functions
 static int init_colors();
 
-void display_board(const struct chess_board *board) {
-	clear();
-	int i_start, j_start; // starting bound
-	int i_end, j_end; // end bound
-	int i_dir, j_dir; // increment/decrement direction
+// Initialize the screen for displaying the chess board
+int init_display(int use_color) {
+	// Set the locale
+	setlocale(LC_ALL, "");
 
-	// determine the direction
-	if (board->player_color == white) { // white goes on bottom
-		// count up from 0 to 7
-		i_start = j_start = 0;
-		i_end = j_end = 8;
-		i_dir = j_dir = 1;
-	} else { // black goes on bottom
-		// count down from 7 to	0
-		i_start = j_start = 7;
-		i_end = j_end = -1;
-		i_dir = j_dir = -1;
+	// Start curses mode
+	initscr();
+
+	// Turn off cbreak
+	nocbreak();
+
+	// Start color mode (if applicable)
+	if (use_color && init_colors()) {
+		fprintf(stderr, "Error: your terminal does not support color.\n");
+		return -1;
 	}
 
-	for (int i = i_start; i != i_end; i += i_dir) {
-		//move(3*i + 1, 0);
-		printw("%d ", 8 - i);
-		for (int j = j_start; j != j_end; j += j_dir) {
-			int color = ((i + j + 1) & 1) + 1; // background color
-			color |= board->grid[7 - i][7 - j].color << 2; // add foreground color
-
-			// Set cursor position
-			// y position is 3*row
-			// x position is 5*col
-			if (board->use_color) {
-				attron(COLOR_PAIR(color));
-				printw("%s", board->grid[i][j].print_char);
-				attroff(COLOR_PAIR(color));
-			} else {
-				printw("%c%s", board->grid[i][j].prefix, board->grid[i][j].print_char);
-			//	printw("%s", board->grid[i][j].print_char);
-			}
-		}
-		printw(" %d\n", 8 - i);
-	}
-
-	if (board->use_color) {
-		if (board->player_color == white)
-			printw("  ABCDEFGH\n\n");
-		else
-			printw("  HGFEDCBA\n\n");
-	} else {
-		if (board->player_color == white)
-			printw("   A B C D E F G H\n\n");
-		else
-			printw("   H G F E D C B A\n\n");
-	}
-
-	printw("Please enter your move: ");
-	refresh();
+	return 0;
 }
 
 static int init_colors() {
@@ -109,6 +72,7 @@ static int init_colors() {
 		return -1;
 	}
 	start_color();
+	using_colors = 1;
 
 	// possibly change black to look better?
 	if (can_change_color()) {
@@ -139,29 +103,75 @@ static int init_colors() {
 	return 0;
 }
 
-int init_display(int use_color) {
-	// Set the locale
-	setlocale(LC_ALL, "");
+void display_board(const struct chess_board *board) {
+	clear();
+	int i_start, j_start; // starting bound
+	int i_end, j_end; // end bound
+	int i_dir, j_dir; // increment/decrement direction
 
-	// Start curses mode
-	initscr();
-
-	// Start color mode (if applicable)
-	if (use_color && init_colors()) {
-		fprintf(stderr, "Error: your terminal does not support color.\n");
-		return -1;
+	// determine the direction
+	if (board->player_color == white) { // white goes on bottom
+		// count up from 0 to 7
+		i_start = j_start = 0;
+		i_end = j_end = 8;
+		i_dir = j_dir = 1;
+	} else { // black goes on bottom
+		// count down from 7 to	0
+		i_start = j_start = 7;
+		i_end = j_end = -1;
+		i_dir = j_dir = -1;
 	}
 
-	return 0;
+	for (int i = i_start; i != i_end; i += i_dir) {
+		printw("%d ", 8 - i); // Print row number
+		for (int j = j_start; j != j_end; j += j_dir) {
+			// Print the chess piece (and prefix/color)
+			if (using_colors) {
+				int color = ((i + j + 1) & 1) + 1; // background color
+				color |= board->grid[7 - i][7 - j].color << 2; // add foreground color
+				attron(COLOR_PAIR(color));
+				printw("%s", board->grid[i][j].print_char);
+				attroff(COLOR_PAIR(color));
+			} else {
+				printw("%c%s", board->grid[i][j].prefix, board->grid[i][j].print_char);
+			}
+		}
+		printw(" %d\n", 8 - i); // Print row number
+	}
+
+	// Print board column description
+	if (using_colors) {
+		if (board->player_color == white)
+			printw("  ABCDEFGH\n\n");
+		else
+			printw("  HGFEDCBA\n\n");
+	} else {
+		if (board->player_color == white)
+			printw("   A B C D E F G H\n\n");
+		else
+			printw("   H G F E D C B A\n\n");
+	}
+
+	printw("Please enter your move: ");
+	refresh();
 }
 
+// Get input from the user;
+// Buffer is assumed to be 8 characters (including terminator)
+void get_user_input(char *buffer) {
+	// Read the move from the user
+	getnstr(buffer, 7);
+	buffer[7] = '\0';
+}
+
+// A function to cleanly end the ncurses window
 void end_display() {
-	// A function to cleanly end the ncurses window
 	// restore colors?
-	if (has_colors() && can_change_color()) {
+	if (using_colors && can_change_color()) {
 		init_color(DARK_BG, orig[0], orig[1], orig[2]);
 		refresh();
 	}
 	// exit the window
 	endwin();
 }
+
