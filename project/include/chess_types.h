@@ -26,14 +26,13 @@ struct chess_piece {
 	// The type of piece
 	enum piece_type id;
 	enum team_color color;
-
+	char prefix; // used to put a "b" or "b" if colors are disabled
 	char print_char[4]; // the text to be printed for the piece
 
 };
 
 struct chess_board {
 	// Information about colors and text choice
-	int use_unicode;
 	int use_color;
 
 	// Information about team and the board

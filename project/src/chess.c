@@ -13,6 +13,13 @@ static void init_piece(struct chess_piece *piece, enum team_color color,
 	piece->color = color;
 	piece->id = type;
 
+	if (color == black)
+		piece->prefix = 'b';
+	else if (color == white)
+		piece->prefix = 'w';
+	else
+		piece->prefix = ' ';
+
 	// Write the piece color
 	switch (type) {
 		case king:
@@ -53,7 +60,7 @@ struct chess_board *init_board(int has_color, int unicode, enum team_color playe
 
 	// Display information
 	board->player_color = player;
-	board->use_unicode = unicode;
+	board->use_color = has_color;
 
 	// White color
 	init_piece(&board->grid[0][0], white, rook, unicode); // rooks

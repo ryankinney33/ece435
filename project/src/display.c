@@ -74,26 +74,30 @@ void display_board(const struct chess_board *board) {
 			// Set cursor position
 			// y position is 3*row
 			// x position is 5*col
-			//move(3*i, 5*j + 3);
-			attron(COLOR_PAIR(color));
-			//printw("     ");
-			//move(3*i + 1, 5*j + 3);
-		//	printw("  %s  ", board[i][j].print_char);
-			printw("%s", board->grid[i][j].print_char);
-			//move(3*i + 2, 5*j + 3);
-			//printw("     ");
-
-			attroff(COLOR_PAIR(color));
+			if (board->use_color) {
+				attron(COLOR_PAIR(color));
+				printw("%s", board->grid[i][j].print_char);
+				attroff(COLOR_PAIR(color));
+			} else {
+				printw("%c%s", board->grid[i][j].prefix, board->grid[i][j].print_char);
+			//	printw("%s", board->grid[i][j].print_char);
+			}
 		}
-		//move(3*i + 1, 45); // 2 space after the edge of the grid
 		printw(" %d\n", 8 - i);
 	}
 
-	//move(25, 5);
-	if (board->player_color == white)
-		printw("  ABCDEFGH\n\n");
-	else
-		printw("  HGFEDCBA\n\n");
+	if (board->use_color) {
+		if (board->player_color == white)
+			printw("  ABCDEFGH\n\n");
+		else
+			printw("  HGFEDCBA\n\n");
+	} else {
+		if (board->player_color == white)
+			printw("   A B C D E F G H\n\n");
+		else
+			printw("   H G F E D C B A\n\n");
+	}
+
 	printw("Please enter your move: ");
 	refresh();
 }
