@@ -29,14 +29,14 @@ int main() {
 	sigaction(SIGBUS, &act, 0);
 	sigaction(SIGTERM, &act, 0);
 
-	struct chess_board *board = init_board(1, 1, white);
+	struct chess_board *board = init_board(1, 1, black);
 	if (board == NULL) {
 		perror("init_board");
 		end_display();
 		return 1;
 	}
 	init_display();
-	display_board(board->grid);
+	display_board(board);
 	getch();
 	end_display();
 	board = destroy_board(board);
