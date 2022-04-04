@@ -5,7 +5,7 @@
 
 // Functions for display handling
 int init_display();
-void display_board(const struct chess_piece board[][8]);
+void display_board(const struct chess_board *board);
 void end_display();
 
 #endif /* DISPLAY_H */

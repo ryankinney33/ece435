@@ -45,14 +45,31 @@ static short orig[3];
 // Private functions
 static int init_colors();
 
-void display_board(const struct chess_piece board[][8]) {
+void display_board(const struct chess_board *board) {
 	clear();
-	for (int i = 0; i < 8; ++i) {
+	int i_start, j_start; // starting bound
+	int i_end, j_end; // end bound
+	int i_dir, j_dir; // increment/decrement direction
+
+	// determine the direction
+	if (board->player_color == white) { // white goes on bottom
+		// count up from 0 to 7
+		i_start = j_start = 0;
+		i_end = j_end = 8;
+		i_dir = j_dir = 1;
+	} else { // black goes on bottom
+		// count down from 7 to	0
+		i_start = j_start = 7;
+		i_end = j_end = -1;
+		i_dir = j_dir = -1;
+	}
+
+	for (int i = i_start; i != i_end; i += i_dir) {
 		//move(3*i + 1, 0);
 		printw("%d ", 8 - i);
-		for (int j = 0; j < 8; ++j) {
-			int color = ((i + j + 1) & 1) + 1; // first the bg color
-			color |= board[7 - i][7 - j].color << 2;
+		for (int j = j_start; j != j_end; j += j_dir) {
+			int color = ((i + j + 1) & 1) + 1; // background color
+			color |= board->grid[7 - i][7 - j].color << 2; // add foreground color
 
 			// Set cursor position
 			// y position is 3*row
@@ -62,7 +79,7 @@ void display_board(const struct chess_piece board[][8]) {
 			//printw("     ");
 			//move(3*i + 1, 5*j + 3);
 		//	printw("  %s  ", board[i][j].print_char);
-			printw("%s", board[i][j].print_char);
+			printw("%s", board->grid[i][j].print_char);
 			//move(3*i + 2, 5*j + 3);
 			//printw("     ");
 
@@ -73,7 +90,10 @@ void display_board(const struct chess_piece board[][8]) {
 	}
 
 	//move(25, 5);
-	printw("  ABCDEFGH\n\n");
+	if (board->player_color == white)
+		printw("  ABCDEFGH\n\n");
+	else
+		printw("  HGFEDCBA\n\n");
 	printw("Please enter your move: ");
 	refresh();
 }
