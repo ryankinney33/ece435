@@ -158,7 +158,7 @@ void display_board(const struct chess_board *board) {
 
 // Get input from the user;
 // Buffer is assumed to be 8 characters (including terminator)
-void get_user_input(char *buffer) {
+void get_user_input(char buffer[8]) {
 	// Read the move from the user
 	getnstr(buffer, 7);
 	buffer[7] = '\0';
