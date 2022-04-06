@@ -51,6 +51,7 @@ greybox_tmp/
 *.bin
 *.map
 chess
+battleship
 */build/
 
 
