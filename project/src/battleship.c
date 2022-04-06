@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "chess.h"
+#include "battleship.h"
 
 static void init_piece(struct chess_piece *piece, enum team_color color,
 		enum piece_type type, int use_unicode)

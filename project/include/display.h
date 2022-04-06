@@ -1,7 +1,7 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include "chess_types.h"
+#include "battleship_types.h"
 
 // Functions for display handling
 int init_display(int use_color);

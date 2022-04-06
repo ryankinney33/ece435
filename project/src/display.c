@@ -2,7 +2,7 @@
 #include <locale.h>
 
 #include "display.h"
-#include "chess_types.h"
+#include "battleship_types.h"
 
 // Macros for the colors
 #define LIGHT_FG	255 // Bright white

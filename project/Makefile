@@ -4,7 +4,7 @@ OBJ_DIR := build
 INC_DIR := include
 
 # source and object files
-BIN := chess
+BIN := battleship
 SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

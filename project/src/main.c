@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #include "display.h"
-#include "chess.h"
+#include "battleship.h"
 #include <ncurses.h>
 
 static void crash_cleanup() {
