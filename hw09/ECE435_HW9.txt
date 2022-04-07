@@ -1,0 +1,23 @@
+ECE435 HW#7 -- Spring 2022
+
+Name: Ryan Kinney
+
+1.
+    a.
+BEGIN Ethernet HEADER	Name of Field		Decoded Value
+0x0000: 0013 3b10 667f	Destination 		00:13:3b:10:66:7f
+0x0006: b827 ebaf 3711	Source  		5*4 = 20 bytes
+0x000c: 0800	        Type/Length		IPv4
+END Ethernet HEADER
+
+    b.
+        The OUI of the destination is 00:13:3b, which is Speed Dragon Multimedia Limited.
+        The OUI of the source is b8:27:eb, which is Raspberry Pi Foundation.
+
+    c.
+        The destination MAC address is not the MAC address of 130.11.46.127. The MAC
+        address corresponds to the gateway machine.
+
+2.
+    a.
+        The protocol is ARP -- address resolution protocol
