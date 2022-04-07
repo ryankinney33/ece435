@@ -1,40 +1,60 @@
-#ifndef CHESS_TYPES_H
-#define CHESS_TYPES_H
+#ifndef BATTLESHIP_TYPES_H
+#define BATTLESHIP_TYPES_H
 
-// The 6 different types of pieces (and deceased)
-enum piece_type {
-	pawn,
-	knight,
-	bishop,
-	rook,
-	king,
-	queen,
-	dead // piece has been taken by other team
+// The 4 different tile states
+enum tile_state {
+	null,	// not occupied, not shot
+	ship,	// occupied, not shot
+	miss,	// not occupied, shot hit
+	hit	// occupied, shot hit
 };
 
-// The 2 different team colors
-enum team_color {
-	null = 0,
-	black = 1,
-	white = 2
+// The different types of ships (holds the size (except submarine))
+enum ship_type {
+	carrier = 5,
+	battleship = 4,
+	destroyer = 3,
+	submarine = 1,
+	patrol_boat = 2,
+	dead = 0
+}
+
+enum ship_direction {
+	up,
+	down,
+	left,
+	right
+}
+
+struct ship {
+	// Information about id and "health"
+	enum ship_type id;
+	enum ship_type health;
+
+	// Location and orientation
+	int row;
+	int col;
+	enum ship_direction;
+}
+
+// Contains the ship locations and two grids.
+// The first grid contains information about where
+// the user's shots success and the second grid
+// contains information about where the opponent
+// has shot
+struct team {
+	// Each team has 1 of each type of ship
+	struct ship car;
+	struct ship bat;
+	struct ship des;
+	struct ship sub;
+	struct ship pat;
+
+	// Holds information about where the player has shot
+	enum tile_state attempts[10][10];
+
+	// The player's grid;
+	enum tile_state opponent[10][10];
 };
 
-// A chess piece
-struct chess_piece {
-	// Piece position
-
-	// The type of piece
-	enum piece_type id;
-	enum team_color color;
-	char prefix; // used to put a "b" or "b" if colors are disabled
-	char print_char[4]; // the text to be printed for the piece
-
-};
-
-struct chess_board {
-	// Information about team and the board
-	enum team_color player_color;
-	struct chess_piece grid[8][8];
-};
-
-#endif /* CHESS_TYPES_H */
+#endif /* BATTLESHIP_TYPES_H */
