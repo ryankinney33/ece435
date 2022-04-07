@@ -46,10 +46,10 @@ struct team {
 	struct ship pat;
 
 	// Holds information about where the player has shot
-	enum tile_state attempts[10][10];
+	enum tile_state enemy[10][10];
 
 	// The player's grid;
-	enum tile_state local[10][10];
+	enum tile_state yours[10][10];
 };
 
 #endif /* BATTLESHIP_TYPES_H */

@@ -105,10 +105,15 @@ static int init_colors()
 
 void display_grids(const struct team *btlshp)
 {
+	if (btlshp == NULL) {
+		return; // sanity check
+	}
+
+	const char tile_map[4] = {'~', ']', 'M', 'H'};
 	clear();
 	printw(" Your Ships\t Enemy Ships\n");
 	printw("  0123456789\t  0123456789\n");
-	printw("A ~~~~~~~~~~\tA ~~~~~~~~~~\n");
+/*	printw("A ~~~~~~~~~~\tA ~~~~~~~~~~\n");
 	printw("B ~~~~~~~~~~\tB ~~~~~~~~~~\n");
 	printw("C ~~~~~~~~~~\tC ~~~~~~~~~~\n");
 	printw("D ~~~~~~~~~~\tD ~~~~~~~~~~\n");
@@ -118,6 +123,21 @@ void display_grids(const struct team *btlshp)
 	printw("H ~~~~~~~~~~\tH ~~~~~~~~~~\n");
 	printw("I ~~~~~~~~~~\tI ~~~~~~~~~~\n");
 	printw("J ~~~~~~~~~~\tJ ~~~~~~~~~~\n");
+*/
+	for (int row = 0; row < 10; ++row) {
+		printw("%c ", row + 'A');
+		for (int col = 0; col < 10; ++col) {
+			char tmp = tile_map[btlshp->yours[row][col]];
+			addch(tmp);
+		}
+		printw("\t%c ", row + 'A');
+		for (int col = 0; col < 10; ++col) {
+			char tmp = tile_map[btlshp->enemy[row][col]];
+			addch(tmp);
+		}
+		addch('\n');
+	}
+	addch('\n');
 	refresh();
 }
 

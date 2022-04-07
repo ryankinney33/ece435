@@ -29,15 +29,20 @@ int main() {
 	sigaction(SIGBUS, &act, 0);
 	sigaction(SIGTERM, &act, 0);
 
+	struct team *btlshp = init_team();
+	if (btlshp == NULL) {
+		perror("init_team");
+		return 1;
+	}
+
 	//struct chess_board *board = init_board(0, black);
 	//if (board == NULL) {
 	//	fprintf(stderr, "Error: could not create the chess board!\n");
 	//	end_display();
 	//	return 1;
 	//}
-	init_display(1);
 	//display_board(board);
-	display_grids(NULL);
+	display_grids(btlshp);
 	//char buf[8];
 	//get_user_input(buf);
 	getch();
