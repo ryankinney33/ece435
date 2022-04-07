@@ -6,9 +6,10 @@
 // Functions for display handling
 int init_display(int use_color);
 void end_display();
-void display_board(const struct chess_board *board);
+void display_grids(const struct team *btlshp);
 
 // Getting input from the user
-void get_user_input(char buffer[8]);
+// buf is assumed to be size + 1 bytes
+void get_user_input(const char *prompt, char *buf, int size);
 
 #endif /* DISPLAY_H */

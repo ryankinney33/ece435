@@ -1,8 +1,9 @@
 #include <ncurses.h>
-#include <locale.h>
+#include <string.h>
 
 #include "display.h"
 #include "battleship_types.h"
+
 
 // Macros for the colors
 #define LIGHT_FG	255 // Bright white
@@ -46,10 +47,8 @@ static int using_colors = 0; // Flag for using colors or not
 static int init_colors();
 
 // Initialize the screen for displaying the chess board
-int init_display(int use_color) {
-	// Set the locale
-	setlocale(LC_ALL, "");
-
+int init_display(int use_color)
+{
 	// Start curses mode
 	initscr();
 
@@ -65,7 +64,8 @@ int init_display(int use_color) {
 	return 0;
 }
 
-static int init_colors() {
+static int init_colors()
+{
 	// Check if colors are supported
 	if (!has_colors()) {
 		endwin();
@@ -103,69 +103,40 @@ static int init_colors() {
 	return 0;
 }
 
-void display_board(const struct chess_board *board) {
+void display_grids(const struct team *btlshp)
+{
 	clear();
-	int i_start, j_start; // starting bound
-	int i_end, j_end; // end bound
-	int i_dir, j_dir; // increment/decrement direction
-
-	// determine the direction
-	if (board->player_color == white) { // white goes on bottom
-		// count up from 0 to 7
-		i_start = j_start = 0;
-		i_end = j_end = 8;
-		i_dir = j_dir = 1;
-	} else { // black goes on bottom
-		// count down from 7 to	0
-		i_start = j_start = 7;
-		i_end = j_end = -1;
-		i_dir = j_dir = -1;
-	}
-
-	for (int i = i_start; i != i_end; i += i_dir) {
-		printw("%d ", 8 - i); // Print row number
-		for (int j = j_start; j != j_end; j += j_dir) {
-			// Print the chess piece (and prefix/color)
-			if (using_colors) {
-				int color = ((i + j + 1) & 1) + 1; // background color
-				color |= board->grid[7 - i][7 - j].color << 2; // add foreground color
-				attron(COLOR_PAIR(color));
-				printw("%s", board->grid[i][j].print_char);
-				attroff(COLOR_PAIR(color));
-			} else {
-				printw("%c%s", board->grid[i][j].prefix, board->grid[i][j].print_char);
-			}
-		}
-		printw(" %d\n", 8 - i); // Print row number
-	}
-
-	// Print board column description
-	if (using_colors) {
-		if (board->player_color == white)
-			printw("  ABCDEFGH\n\n");
-		else
-			printw("  HGFEDCBA\n\n");
-	} else {
-		if (board->player_color == white)
-			printw("   A B C D E F G H\n\n");
-		else
-			printw("   H G F E D C B A\n\n");
-	}
-
-	printw("Please enter your move: ");
+	printw(" Your Ships\t Enemy Ships\n");
+	printw("  0123456789\t  0123456789\n");
+	printw("A ~~~~~~~~~~\tA ~~~~~~~~~~\n");
+	printw("B ~~~~~~~~~~\tB ~~~~~~~~~~\n");
+	printw("C ~~~~~~~~~~\tC ~~~~~~~~~~\n");
+	printw("D ~~~~~~~~~~\tD ~~~~~~~~~~\n");
+	printw("E ~~~~~~~~~~\tE ~~~~~~~~~~\n");
+	printw("F ~~~~~~~~~~\tF ~~~~~~~~~~\n");
+	printw("G ~~~~~~~~~~\tG ~~~~~~~~~~\n");
+	printw("H ~~~~~~~~~~\tH ~~~~~~~~~~\n");
+	printw("I ~~~~~~~~~~\tI ~~~~~~~~~~\n");
+	printw("J ~~~~~~~~~~\tJ ~~~~~~~~~~\n");
 	refresh();
 }
 
-// Get input from the user;
-// Buffer is assumed to be 8 characters (including terminator)
-void get_user_input(char buffer[8]) {
-	// Read the move from the user
-	getnstr(buffer, 7);
-	buffer[7] = '\0';
+void get_user_input(const char *prompt, char *buf, int size)
+{
+	// clear the buffer
+	memset(buf, 0, size);
+
+	// Display the prompt
+	addstr(prompt);
+	refresh();
+
+	// read the bytes from the user
+	getnstr(buf, size - 1);
 }
 
 // A function to cleanly end the ncurses window
-void end_display() {
+void end_display()
+{
 	// restore colors?
 	if (using_colors && can_change_color()) {
 		init_color(DARK_BG, orig[0], orig[1], orig[2]);

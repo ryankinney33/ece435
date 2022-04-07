@@ -52,6 +52,7 @@ greybox_tmp/
 *.map
 chess
 battleship
+*.swp
 */build/
 
 
