@@ -11,7 +11,7 @@ OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # Flags
 CPPFLAGS := -I$(INC_DIR) -MMD -MP
 CFLAGS := -Wall -g
-LDLIBS := -lncursesw
+LDLIBS := -lncurses
 
 # Build rules
 .PHONY: all clean

@@ -4,47 +4,29 @@
 #include "display.h"
 #include "battleship_types.h"
 
-
 // Macros for the colors
-#define LIGHT_FG	255 // Bright white
-#define DARK_FG 	9 // A bright red
-#define LIGHT_BG	236 // A gray color
-#define DARK_BG 	0 // Black
+#define COL_NULL	18 // A darkish blue
+#define COL_SHIP	236 // A gray color
+#define COL_MISS	6 // A much lighter blue
+#define COL_HIT 	9 // Darker red
 
-// 8 color terminal colors
-#define LIGHT_FG8	COLOR_WHITE
-#define DARK_FG8	COLOR_RED
-#define LIGHT_BG8	COLOR_GREEN
-#define DARK_BG8	COLOR_BLACK
+// 8 terminal colors
+#define COL_NULL8	COLOR_BLUE
+#define COL_SHIP8	COLOR_BLACK
+#define COL_MISS8	COLOR_MAGENTA
+#define COL_HIT8	COLOR_RED
 
-/*
- * Color pairs
- * 6 states:
- *   1. Black square no piece
- *   2. Black square white piece
- *   3. Black square black piece
- *   4. White square no piece
- *   5. White square black piece
- *   6. White square white piece
- * Colors pair number bits are the following:
- * LFG, DFG, LBG, DBG;
- * L = light, D = dark, BG = background, FG = foreground
- * Used in the color selection logic in the display_grid function
- * Even row and odd column = LBG, otherwise, DFG
- * Foreground color depends on the piece
- */
-#define BLACK_NO	0x01 // dark bg, no piece
-#define WHITE_NO	0x02 // light bg, no piece
-#define BLACK_BL	0x05 // dark bg, dark piece
-#define WHITE_BL	0x06 // light bg, dark piece
-#define BLACK_WH	0x09 // dark bg, light piece
-#define WHITE_WH	0x0A // light bg, light piece
+//  Color pairs for the 4 tile states:
+#define NULL_TILE 1
+#define SHIP_TILE 2
+#define MISS_TILE 3
+#define HIT_TILE  4
 
 static short orig[3]; // Original black color:
 static int using_colors = 0; // Flag for using colors or not
 
 // Private functions
-static int init_colors();
+static int init_colors(void);
 
 // Initialize the screen for displaying the chess board
 int init_display(int use_color)
@@ -64,7 +46,7 @@ int init_display(int use_color)
 	return 0;
 }
 
-static int init_colors()
+static int init_colors(void)
 {
 	// Check if colors are supported
 	if (!has_colors()) {
@@ -76,28 +58,25 @@ static int init_colors()
 
 	// possibly change black to look better?
 	if (can_change_color()) {
-		color_content(DARK_BG, &orig[0], &orig[1], &orig[2]);
-		init_color(DARK_BG, 0, 0, 0);
+		color_content(COLOR_BLACK, &orig[0], &orig[1], &orig[2]);
+		init_color(COLOR_BLACK, 0, 0, 0);
 	}
 
 	// Initialize the color pairs
 	if (COLORS >= 256) {
 		// revert to older colors
 		// use 256 color mode
-		init_pair(WHITE_NO, LIGHT_BG, LIGHT_BG); // FG color doesnt matter
-		init_pair(BLACK_NO, DARK_BG, DARK_BG); // FG color doesnt matter
-		init_pair(WHITE_BL, DARK_FG, LIGHT_BG);
-		init_pair(BLACK_BL, DARK_FG, DARK_BG);
-		init_pair(WHITE_WH, LIGHT_FG, LIGHT_BG);
-		init_pair(BLACK_WH, LIGHT_FG, DARK_BG);
+		init_pair(NULL_TILE, COLOR_WHITE, COL_NULL);
+		init_pair(SHIP_TILE, COLOR_WHITE, COL_SHIP);
+		init_pair(MISS_TILE, COLOR_BLACK, COL_MISS);
+		init_pair(HIT_TILE, COLOR_BLACK, COL_HIT);
+
 	} else {
 		// revert to default 8 color mode
-		init_pair(WHITE_NO, LIGHT_BG8, LIGHT_BG8); // FG color doesnt matter
-		init_pair(BLACK_NO, DARK_BG8, DARK_BG8); // FG color doesnt matter
-		init_pair(WHITE_BL, DARK_FG8, LIGHT_BG8);
-		init_pair(BLACK_BL, DARK_FG8, DARK_BG8);
-		init_pair(WHITE_WH, LIGHT_FG8, LIGHT_BG8);
-		init_pair(BLACK_WH, LIGHT_FG8, DARK_BG8);
+		init_pair(NULL_TILE, COLOR_WHITE, COL_NULL8);
+		init_pair(SHIP_TILE, COLOR_WHITE, COL_SHIP8);
+		init_pair(MISS_TILE, COLOR_WHITE, COL_MISS8);
+		init_pair(HIT_TILE, COLOR_WHITE, COL_HIT8);
 	}
 
 	return 0;
@@ -110,21 +89,38 @@ void display_grids(const struct team *btlshp)
 	}
 
 	const char tile_map[4] = {'~', 'S', 'X', 'H'};
+	const char tile_map_c[4] = {'~', ' ', 'X', 'X'};
 	clear();
-	printw(" Your Ships\t Enemy Ships\n");
+	printw("  Your Ships\t Enemy Ships\n");
 	printw("  0123456789\t  0123456789\n");
 	for (int row = 0; row < 10; ++row) {
 		printw("%c ", row + 'A');
 		for (int col = 0; col < 10; ++col) {
-			char tmp = tile_map[btlshp->yours[row][col]];
-			addch(tmp);
+			enum tile_state tstate = btlshp->yours[row][col];
+			char tmp = tile_map[tstate];
+			if (using_colors) {
+				tmp = tile_map_c[tstate];
+				attron(COLOR_PAIR(tstate + 1));
+				addch(tmp);
+				attroff(COLOR_PAIR(tstate + 1));
+			} else {
+				addch(tmp);
+			}
 		}
-		printw("\t%c ", row + 'A');
+		printw(" %c\t%c ", row + 'A', row + 'A');
 		for (int col = 0; col < 10; ++col) {
-			char tmp = tile_map[btlshp->enemy[row][col]];
-			addch(tmp);
+			enum tile_state tstate = btlshp->enemy[row][col];
+			char tmp = tile_map[tstate];
+			if (using_colors) {
+				tmp = tile_map_c[tstate];
+				attron(COLOR_PAIR(tstate + 1));
+				addch(tmp);
+				attroff(COLOR_PAIR(tstate + 1));
+			} else {
+				addch(tmp);
+			}
 		}
-		addch('\n');
+		printw(" %c\n", row + 'A');
 	}
 	printw("  0123456789\t  0123456789\n\n");
 	refresh();
@@ -148,7 +144,7 @@ void end_display()
 {
 	// restore colors?
 	if (using_colors && can_change_color()) {
-		init_color(DARK_BG, orig[0], orig[1], orig[2]);
+		init_color(COLOR_BLACK, orig[0], orig[1], orig[2]);
 		refresh();
 	}
 	// exit the window

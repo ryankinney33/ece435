@@ -146,18 +146,6 @@ struct team *init_team(void)
 	// Initialize the display for showing the grid and getting input
 	init_display(1);
 
-	/*
-	enum tile_state TALLY_HO_LADS = 0;
-	for (int i = 0; i < 10; ++i) {
-		for (int j = 0; j < 10; ++j) {
-			btlshp->yours[i][j] = btlshp->enemy[i][j] = TALLY_HO_LADS++;
-			if (TALLY_HO_LADS > 3) {
-				TALLY_HO_LADS = 0;
-			}
-		}
-	}
-	*/
-
 	// Initialize the ships
 	display_grids(btlshp);
 	setup_ship(&btlshp->car, carrier, btlshp->yours);
