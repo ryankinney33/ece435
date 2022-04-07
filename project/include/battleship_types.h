@@ -17,25 +17,20 @@ enum ship_type {
 	submarine = 1,
 	patrol_boat = 2,
 	dead = 0
-}
+};
 
 enum ship_direction {
 	up,
 	down,
 	left,
 	right
-}
+};
 
 struct ship {
 	// Information about id and "health"
 	enum ship_type id;
 	enum ship_type health;
-
-	// Location and orientation
-	int row;
-	int col;
-	enum ship_direction;
-}
+};
 
 // Contains the ship locations and two grids.
 // The first grid contains information about where
@@ -54,7 +49,7 @@ struct team {
 	enum tile_state attempts[10][10];
 
 	// The player's grid;
-	enum tile_state opponent[10][10];
+	enum tile_state local[10][10];
 };
 
 #endif /* BATTLESHIP_TYPES_H */
