@@ -109,21 +109,10 @@ void display_grids(const struct team *btlshp)
 		return; // sanity check
 	}
 
-	const char tile_map[4] = {'~', ']', 'M', 'H'};
+	const char tile_map[4] = {'~', 'S', 'X', 'H'};
 	clear();
 	printw(" Your Ships\t Enemy Ships\n");
 	printw("  0123456789\t  0123456789\n");
-/*	printw("A ~~~~~~~~~~\tA ~~~~~~~~~~\n");
-	printw("B ~~~~~~~~~~\tB ~~~~~~~~~~\n");
-	printw("C ~~~~~~~~~~\tC ~~~~~~~~~~\n");
-	printw("D ~~~~~~~~~~\tD ~~~~~~~~~~\n");
-	printw("E ~~~~~~~~~~\tE ~~~~~~~~~~\n");
-	printw("F ~~~~~~~~~~\tF ~~~~~~~~~~\n");
-	printw("G ~~~~~~~~~~\tG ~~~~~~~~~~\n");
-	printw("H ~~~~~~~~~~\tH ~~~~~~~~~~\n");
-	printw("I ~~~~~~~~~~\tI ~~~~~~~~~~\n");
-	printw("J ~~~~~~~~~~\tJ ~~~~~~~~~~\n");
-*/
 	for (int row = 0; row < 10; ++row) {
 		printw("%c ", row + 'A');
 		for (int col = 0; col < 10; ++col) {
@@ -137,7 +126,7 @@ void display_grids(const struct team *btlshp)
 		}
 		addch('\n');
 	}
-	addch('\n');
+	printw("  0123456789\t  0123456789\n\n");
 	refresh();
 }
 
