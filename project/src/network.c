@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 
 #include "battleship_types.h"
 #include "network.h"
@@ -68,5 +69,47 @@ int host_game(uint16_t port, struct game *btlshp)
 	}
 
 	// Done!
+	return 0;
+}
+
+// Open a TCP connection to the host
+int join_game(const char *hostname, uint16_t port, struct game *btlshp)
+{
+	if (btlshp == NULL) {
+		return -1; // Sanity check
+	}
+	btlshp->serv_fd = -1;
+
+	/*
+	 * Open a socket to connect to
+	 * AF_INET = IPv4
+	 * SOCK_STREAM is a reliable two-way connection (TCP)
+	 */
+	btlshp->enemy_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (btlshp->enemy_fd < 0) {
+		perror("socket");
+		return -1;
+	}
+
+	// Look up the server info based on its name
+	struct hostent *server = gethostbyname(hostname);
+	if (server == NULL) {
+		fprintf(stderr, "Error: No such host.\n");
+		return -1;
+	}
+
+	// Set the address and port of the server
+	struct sockaddr_in server_addr;
+	memset(&server_addr, 0, sizeof(server_addr));
+	server_addr.sin_family = AF_INET;
+	memcpy(server->h_addr, &server_addr.sin_addr.s_addr, server->h_length);
+	server_addr.sin_port = htons(port);
+
+	// Connect to the server
+	if (connect(btlshp->enemy_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+		perror("connect");
+		return -1;
+	}
+
 	return 0;
 }
