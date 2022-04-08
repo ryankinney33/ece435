@@ -6,7 +6,7 @@
 // Functions for display handling
 int init_display(int use_color);
 void end_display();
-void display_grids(const struct team *btlshp);
+void display_grids(const struct game *btlshp);
 
 // Getting input from the user
 // buf is assumed to be size + 1 bytes

@@ -42,7 +42,7 @@ struct ship {
 // the user's shots success and the second grid
 // contains information about where the opponent
 // has shot
-struct team {
+struct game {
 	// Each team has 1 of each type of ship
 	struct ship car;
 	struct ship bat;
@@ -55,6 +55,10 @@ struct team {
 
 	// The player's grid;
 	enum tile_state yours[10][10];
+
+	// Socket stuff
+	int serv_fd;
+	int enemy_fd;
 };
 
 #endif /* BATTLESHIP_TYPES_H */

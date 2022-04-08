@@ -22,9 +22,9 @@ static void setup_ship(struct ship *btl, enum ship_type type, enum tile_state gr
 // Set up the battlship game
 // Gets input from the user to set up the grid
 // Also displays the grid
-struct team *init_game(int use_color)
+struct game *init_game(int use_color)
 {
-	struct team *btlshp = malloc(sizeof(struct team));
+	struct game *btlshp = malloc(sizeof(struct game));
 	if (btlshp == NULL)
 		return NULL;
 
@@ -183,7 +183,7 @@ static int set_ship_location(struct ship *btl, int row, int col, enum ship_direc
 // Calls a function to process the move
 // Sends the move to the remote client
 // Receives the result from the remote client
-void get_move_user(struct team *btlshp)
+void get_move_user(struct game *btlshp)
 {
 	if (btlshp == NULL)
 		return;
@@ -229,3 +229,9 @@ static int decode_location(const char buf[3], int *row, int *col)
 	return 0;
 }
 
+void get_move_enemy(struct game *btlshp)
+{
+
+
+
+}

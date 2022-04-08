@@ -82,7 +82,7 @@ static int init_colors(void)
 	return 0;
 }
 
-void display_grids(const struct team *btlshp)
+void display_grids(const struct game *btlshp)
 {
 	if (btlshp == NULL) {
 		return; // sanity check
