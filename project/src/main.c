@@ -29,7 +29,7 @@ int main() {
 	sigaction(SIGBUS, &act, 0);
 	sigaction(SIGTERM, &act, 0);
 
-	struct team *btlshp = init_team();
+	struct team *btlshp = init_game(1);
 	if (btlshp == NULL) {
 		perror("init_team");
 		return 1;

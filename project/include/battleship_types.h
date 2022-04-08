@@ -30,6 +30,11 @@ struct ship {
 	// Information about id and "health"
 	enum ship_type id;
 	enum ship_type health;
+
+	// Location and orientation
+	int row;
+	int col;
+	enum ship_direction dir;
 };
 
 // Contains the ship locations and two grids.

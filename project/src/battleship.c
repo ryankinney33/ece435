@@ -7,6 +7,7 @@
 
 #include "battleship_types.h"
 #include "display.h"
+#include <ncurses.h>
 
 
 
@@ -60,6 +61,9 @@ static int set_ship_location(struct ship *btl, int row, int col, enum ship_direc
 	}
 
 	// No collision; set the values
+	btl->row = row;
+	btl->col = col;
+	btl->dir = dir;
 	if (dir == up || dir == down) {
 		for (int i = 0; i < btl->health; ++i) {
 			grid[row + sign * i][col] = ship;
@@ -73,7 +77,25 @@ static int set_ship_location(struct ship *btl, int row, int col, enum ship_direc
 	return 0;
 }
 
+// Returns 0 on success
+static int decode_location(const char buf[3], int *row, int *col)
+{
+	if (buf == NULL)
+		return -1;
 
+
+	char tmp = tolower(buf[0]);
+
+	if (tmp < 'a' || tmp > 'j' || buf[1] < '0' || buf[1] > '9')
+		return -2;
+
+	*row = tmp - 'a';
+	*col = buf[1] - '0';
+
+	return 0;
+}
+
+// Gets user input to eventually set the ship location
 static void setup_ship(struct ship *btl, enum ship_type type, enum tile_state grid[10][10])
 {
 	// Set the health and id of the ship
@@ -90,18 +112,12 @@ static void setup_ship(struct ship *btl, enum ship_type type, enum tile_state gr
 		get_user_input(prompt, buf, 3);
 
 		// Decode the input
-		buf[0] = tolower(buf[0]);
-
-		if ((buf[0] < 'a' || buf[0] > 'j') // first character should be a-j
-		    || (buf[1] < '0' || buf[1] > '9')) { // 2nd should be 0-9
+		int row, col;
+		if (decode_location(buf, &row, &col)) {
 			// There was an invalid input
 			snprintf(prompt, 55, "Invalid input, please try again: ");
 			continue;
 		}
-
-		// Extract the row and column
-		int row = buf[0] - 'a';
-		int col = buf[1] - '0';
 
 		snprintf(prompt, 55, "Please enter the orientation (up, down, left, right): ");
 		get_user_input(prompt, buf, 6);
@@ -133,7 +149,10 @@ static void setup_ship(struct ship *btl, enum ship_type type, enum tile_state gr
 	}
 }
 
-struct team *init_team(void)
+// Set up the battlship game
+// Gets input from the user to set up the grid
+// Also displays the grid
+struct team *init_game(int use_color)
 {
 	struct team *btlshp = malloc(sizeof(struct team));
 	if (btlshp == NULL)
@@ -144,7 +163,7 @@ struct team *init_team(void)
 	memset(btlshp->yours, null, 100 * sizeof(enum tile_state));
 
 	// Initialize the display for showing the grid and getting input
-	init_display(1);
+	init_display(use_color);
 
 	// Initialize the ships
 	display_grids(btlshp);
@@ -159,4 +178,28 @@ struct team *init_team(void)
 	setup_ship(&btlshp->pat, patrol_boat, btlshp->yours);
 
 	return btlshp; // No more work to be done
+}
+
+// Get a move from the user
+// Calls a function to process the move
+void get_move(struct team *btlshp)
+{
+	if (btlshp == NULL)
+		return;
+
+	// First get the move from the user
+	char prompt[34];
+	char buf[3];
+	snprintf(prompt, 34, "Enter your shot: ");
+	while (1) {
+		get_user_input(prompt, buf, 3);
+
+		// validate the input
+		//buf[0] = tolower
+
+	}
+
+
+	snprintf(prompt, 34, "Invalid input, please try again: ");
+
 }
