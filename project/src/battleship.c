@@ -4,10 +4,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <inttypes.h>
 
 #include "battleship_types.h"
 #include "display.h"
 #include "network.h"
+#include <ncurses.h>
+
 
 // Private functions
 static int set_ship_location(struct ship *btl, int row, int col,
@@ -19,14 +22,34 @@ static void setup_ship(struct ship *btl, enum ship_type type, enum tile_state gr
 
 /************************************* Initialization functions **************************/
 
-// Set up the battlship game
-// Gets input from the user to set up the grid
-// Also displays the grid
-struct game *init_game(int use_color)
+/*
+ * Set up the battlship game
+ * Gets input from the user to set up the grid
+ * Also displays the grid
+ */
+struct game *init_game(const char *hostname, uint16_t port, int use_color)
 {
 	struct game *btlshp = malloc(sizeof(struct game));
-	if (btlshp == NULL)
+	if (btlshp == NULL) {
+		perror("malloc");
 		return NULL;
+	}
+
+	// Perform network connections
+	if (hostname == NULL) { // hosting
+		printf("Hosting on port %"PRIu16"\n", port);
+		if (host_game(port, btlshp) < 0) {
+			free(btlshp);
+			return NULL;
+		}
+	} else {
+		printf("Connecting to %s on port %"PRIu16"\n", hostname, port);
+		if (join_game(hostname, port, btlshp) < 0) {
+			free(btlshp);
+			return NULL;
+		}
+	}
+	printf("\nConnection received.\n");
 
 	// Make sure both grids are set to the default state
 	memset(btlshp->enemy, null, 100 * sizeof(enum tile_state));
@@ -46,6 +69,32 @@ struct game *init_game(int use_color)
 	setup_ship(&btlshp->sub, submarine, btlshp->yours);
 	display_grids(btlshp);
 	setup_ship(&btlshp->pat, patrol_boat, btlshp->yours);
+
+	display_grids(btlshp);
+
+	// Tell the other player we are ready
+	if (send_to_enemy("done", btlshp) < 0) {
+		perror("send_to_enemy");
+		free(btlshp);
+		return NULL;
+	}
+
+	printw("Waiting for other player...");
+	refresh();
+
+	// Wait for the other player to be ready
+	char *buf = read_from_enemy(btlshp);
+	if (buf == NULL) {
+		perror("read_from_enemy");
+		free(btlshp);
+		return NULL;
+	} else if (strcmp(buf, "done")) { // sanity check
+		fprintf(stderr, "Received unexpected message...\n");
+		free(btlshp);
+		free(buf);
+		return NULL;
+	}
+	free(buf);
 
 	return btlshp; // No more work to be done
 }
@@ -111,11 +160,13 @@ static void setup_ship(struct ship *btl, enum ship_type type, enum tile_state gr
 	}
 }
 
-// Set the ship location in the grid
-// Returns:
-//   0 on success
-//  -1 on out-of-bounds
-//  -2 on collision
+/*
+ * Set the ship location in the grid
+ * Returns:
+ *   0 on success
+ *  -1 on out-of-bounds
+ *  -2 on collision
+ */
 static int set_ship_location(struct ship *btl, int row, int col, enum ship_direction dir, enum tile_state grid[10][10])
 {
 	// Sanity check
@@ -179,10 +230,12 @@ static int set_ship_location(struct ship *btl, int row, int col, enum ship_direc
 
 /******************************** Gameplay-related functions ******************************/
 
-// Get a move from the user
-// Calls a function to process the move
-// Sends the move to the remote client
-// Receives the result from the remote client
+/*
+ * Get a move from the user
+ * Calls a function to process the move
+ * Sends the move to the remote client
+ * Receives the result from the remote client
+ */
 void get_move_user(struct game *btlshp)
 {
 	if (btlshp == NULL)
@@ -209,11 +262,12 @@ void get_move_user(struct game *btlshp)
 	// Get response and update the grid
 }
 
-// Decodes the passed location string
-// Locations are a letter followed by a number
-// Letters are from a-j and number from 0-9
-// Letter may be capital
-// Returns 0 on success
+/* Decodes the passed location string
+ * Locations are a letter followed by a number
+ * Letters are from a-j and number from 0-9
+ * Letter may be capital
+ * Returns 0 on success
+ */
 static int decode_location(const char buf[3], int *row, int *col)
 {
 	if (buf == NULL)

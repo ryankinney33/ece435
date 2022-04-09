@@ -110,27 +110,16 @@ int main(int argc, char *argv[])
 	if (!port)
 		port = 31337;
 
-	// For now, print the information
-	if (hostname == NULL)
-		printf("Hosting");
-	else
-		printf("Connecting to %s", hostname);
-	printf(" on port %u\n", port);
-	printf("Color flag = %d\n", use_color);
+	struct game *btlshp = init_game(hostname, port, use_color);
+	if (btlshp == NULL) {
+		end_display();
+		return 1;
+	}
 
 
-	struct game btlshp;
-
-	// struct game *btlshp = init_game(1);
-	//if (btlshp == NULL) {
-	//	perror("init_team");
-	//	return 1;
-	//}
-
-
-	//display_grids(btlshp);
-	//getch();
-	//end_display();
+//	display_grids(btlshp);
+//	getch();
+	end_display();
 
 	return 0;
 }
