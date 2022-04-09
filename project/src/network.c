@@ -127,7 +127,7 @@ int send_to_enemy(const char *message, struct game *btlshp)
 	}
 
 	// Send the message to the enemy
-	return write(btlshp->enemy_fd, message, strlen(message));
+	return write(btlshp->enemy_fd, message, strlen(message) + 1);
 }
 
 /*
