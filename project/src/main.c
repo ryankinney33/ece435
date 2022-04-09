@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 				// Display the help message
 				printf("Usage: %s [-options] [hostname] [port]\n", argv[0]);
 				printf("Play a game of battleship.\n");
-				printf("If no hostname or port are specified, hosts a game on port 31337\n");
+				printf("If no hostname or port is specified, hosts a game on port 31337\n");
 				printf("If a port is passed with no hostname, hosts a game on the specified port.\n");
 				printf("If a hostname is passed with no port, connects to the host on port 31337.\n");
 				printf("Options:\n");
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 
 	// For now, print the information
 	if (hostname == NULL)
-		printf("Hosting a game");
+		printf("Hosting");
 	else
 		printf("Connecting to %s", hostname);
 	printf(" on port %u\n", port);
