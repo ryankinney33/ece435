@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <unistd.h>
 
 #include "battleship_types.h"
 #include "network.h"
@@ -63,10 +64,11 @@ int host_game(uint16_t port, struct game *btlshp)
 
 	// Get a connection from a client
 	struct sockaddr client_addr;
-	socklen_t client_len;
-	btlshp->enemy_fd = accept(btlshp->serv_fd, (struct sockaddr *)&client_addr, &client_len);
+	socklen_t client_len = sizeof(client_addr);
+	btlshp->enemy_fd = accept(btlshp->serv_fd, &client_addr, &client_len);
 	if (btlshp->enemy_fd < 0) {
 		perror("accept");
+		return -1;
 	}
 
 	// Done!
@@ -125,7 +127,7 @@ int send_to_enemy(const char *message, struct game *btlshp)
 	}
 
 	// Send the message to the enemy
-	return send(btlshp->enemy_fd, message, strlen(message), 0);
+	return write(btlshp->enemy_fd, message, strlen(message));
 }
 
 /*
@@ -145,7 +147,7 @@ char *read_from_enemy(struct game *btlshp)
 		// Read the message 20 characters at a time
 		char buf[20];
 		memset(buf, 0, sizeof(char));
-		ssize_t res = recv(btlshp->enemy_fd, buf, 20, 0);
+		ssize_t res = read(btlshp->enemy_fd, buf, 20);
 		if (res < 0) {
 			// There was an error
 			free(msg);
