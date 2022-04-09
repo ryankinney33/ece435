@@ -7,7 +7,7 @@
 
 #include "battleship_types.h"
 #include "display.h"
-#include <ncurses.h>
+#include "network.h"
 
 // Private functions
 static int set_ship_location(struct ship *btl, int row, int col,

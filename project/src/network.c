@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -113,3 +114,62 @@ int join_game(const char *hostname, uint16_t port, struct game *btlshp)
 
 	return 0;
 }
+
+// Send a message to the enemy
+int send_to_enemy(const char *message, struct game *btlshp)
+{
+	// sanity check
+	if (message == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+
+	// Send the message to the enemy
+	return send(btlshp->enemy_fd, message, strlen(message), 0);
+}
+
+/*
+ * Read the message from enemy
+ * The message is allocated by this function
+ * and should be freed by caller when no longer
+ * needed
+ */
+char *read_from_enemy(struct game *btlshp)
+{
+	size_t msg_size = 0;
+	char *msg = malloc(1 * sizeof(char));
+	if (msg == NULL)
+		return NULL;
+	*msg = '\0';
+	do {
+		// Read the message 20 characters at a time
+		char buf[20];
+		memset(buf, 0, sizeof(char));
+		ssize_t res = recv(btlshp->enemy_fd, buf, 20, 0);
+		if (res < 0) {
+			// There was an error
+			free(msg);
+			return NULL;
+		} else if (!res) {
+			// No bytes were read; connection lost
+			free(msg);
+			return NULL;
+		}
+
+		// Grow the buffer
+		msg_size += res;
+		char *tmp = realloc(msg, msg_size);
+		if (tmp == NULL) {
+			// Memory allocation error
+			free(msg);
+			return NULL;
+		}
+		msg = tmp;
+
+		// Append the message to the buffer
+		memcpy(msg + msg_size - res, buf, res);
+	} while(msg[msg_size - 1]); // Terminating character; end of message
+
+	return msg;
+}
+
