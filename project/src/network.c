@@ -36,8 +36,8 @@ int host_game(uint16_t port, struct game *btlshp)
 	 * Set SO_REUSEADDR so the socket does not enter TIME_WAIT on
 	 * early exit
 	 */
-	char on = 1;
-	if (setsockopt(btlshp->serv_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on))) {
+	int on = 1;
+	if (setsockopt(btlshp->serv_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on))) {
 		perror("setsockopt");
 		return -1;
 	}
