@@ -20,14 +20,22 @@ static void crash_cleanup(int signum)
 	exit(EXIT_FAILURE);
 }
 
+static void winch_h(int signum)
+{
+	refresh();
+}
+
 int main(int argc, char *argv[])
 {
 
 	// Install signal handlers for some common deadly signals
 	struct sigaction act;
+	struct sigaction ign;
 	memset(&act, 0, sizeof(act));
+	memset(&ign, 0, sizeof(ign));
 
 	act.sa_handler = crash_cleanup;
+	ign.sa_handler = winch_h;
 	sigaction(SIGINT, &act, 0);
 	sigaction(SIGABRT, &act, 0);
 	sigaction(SIGILL, &act, 0);
@@ -35,6 +43,8 @@ int main(int argc, char *argv[])
 	sigaction(SIGSEGV, &act, 0);
 	sigaction(SIGBUS, &act, 0);
 	sigaction(SIGTERM, &act, 0);
+	sigaction(SIGHUP, &act, 0);
+	sigaction(SIGWINCH, &ign, 0);
 
 	// Read the command line arguments and set the flags
 	uint16_t port = 0;
