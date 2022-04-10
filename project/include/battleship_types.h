@@ -44,11 +44,7 @@ struct ship {
 // has shot
 struct game {
 	// Each team has 1 of each type of ship
-	struct ship car;
-	struct ship bat;
-	struct ship des;
-	struct ship sub;
-	struct ship pat;
+	struct ship boats[5];
 
 	// Holds information about where the player has shot
 	enum tile_state enemy[10][10];
