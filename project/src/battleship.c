@@ -17,8 +17,8 @@ static int set_ship_location(struct ship *btl, int row, int col,
 		enum ship_direction dir, enum tile_state grid[10][10]);
 static int decode_location(const char buf[3], int *row, int *col);
 static void setup_ship(struct ship *btl, enum ship_type type, enum tile_state grid[10][10]);
-
-
+static enum ship_type determine_hit(int row, int col, struct game *btlshp);
+static int was_ship_hit(const struct ship *btl, int row, int col);
 
 /************************************* Initialization functions **************************/
 
@@ -60,15 +60,15 @@ struct game *init_game(const char *hostname, uint16_t port, int use_color)
 
 	// Initialize the ships
 	display_grids(btlshp);
-	setup_ship(&btlshp->car, carrier, btlshp->yours);
+	setup_ship(&btlshp->boats[0], carrier, btlshp->yours);
 	display_grids(btlshp);
-	setup_ship(&btlshp->bat, battleship, btlshp->yours);
+	setup_ship(&btlshp->boats[1], battleship, btlshp->yours);
 	display_grids(btlshp);
-	setup_ship(&btlshp->des, destroyer, btlshp->yours);
+	setup_ship(&btlshp->boats[2], destroyer, btlshp->yours);
 	display_grids(btlshp);
-	setup_ship(&btlshp->sub, submarine, btlshp->yours);
+	setup_ship(&btlshp->boats[3], submarine, btlshp->yours);
 	display_grids(btlshp);
-	setup_ship(&btlshp->pat, patrol_boat, btlshp->yours);
+	setup_ship(&btlshp->boats[4], patrol_boat, btlshp->yours);
 
 	display_grids(btlshp);
 
@@ -236,10 +236,10 @@ static int set_ship_location(struct ship *btl, int row, int col, enum ship_direc
  * Sends the move to the remote client
  * Receives the result from the remote client
  */
-void get_move_user(struct game *btlshp)
+int get_move_user(struct game *btlshp)
 {
 	if (btlshp == NULL)
-		return;
+		return -1;
 
 	// First get the move from the user
 	char prompt[34];
@@ -260,9 +260,11 @@ void get_move_user(struct game *btlshp)
 	// Send to other client
 
 	// Get response and update the grid
+	return 0;
 }
 
-/* Decodes the passed location string
+/*
+ * Decodes the passed location string
  * Locations are a letter followed by a number
  * Letters are from a-j and number from 0-9
  * Letter may be capital
@@ -283,9 +285,127 @@ static int decode_location(const char buf[3], int *row, int *col)
 	return 0;
 }
 
-void get_move_enemy(struct game *btlshp)
+// Waits until the enemy sends their move
+int get_move_enemy(struct game *btlshp)
 {
+	// First, read the move from the enemy
+	char *msg = read_from_enemy(btlshp);
+	if (msg == NULL) {
+		return -1;
+	}
 
+	// The string is simply the row column pair, such as j0
+	int row, col;
 
+	// The location has already been checked for validity by
+	// the enemy, no need to do it here
+	decode_location(msg, &row, &col);
+	free(msg); // done with msg
 
+	// Determine if there was a hit, miss, or repeat shot
+	if (btlshp->yours[row][col] == ship) {
+		// there was a hit
+		btlshp->yours[row][col] = hit;
+
+		// Figure out which ship was hit
+		enum ship_type typ = determine_hit(row, col, btlshp);
+
+		// See if all the ships are dead
+		int dead_count = 0;
+		int ship_died = 0; // flag if the ship hit just sank
+		for (int i = 0; i < 5; ++i) {
+			if (btlshp->boats[i].health == dead) {
+				dead_count++;
+				if (btlshp->boats[i].id == typ)
+					ship_died = 1;
+			}
+		}
+
+		// Send the response message
+		if (dead_count == 5)
+			return send_to_enemy("Hded", btlshp);
+
+		if (ship_died) {
+			switch (typ) {
+				case carrier:
+					return send_to_enemy("Hbat", btlshp);
+				case battleship:
+					return send_to_enemy("Hbat", btlshp);
+				case destroyer:
+					return send_to_enemy("Hdes", btlshp);
+				case submarine:
+					return send_to_enemy("Hsub", btlshp);
+				case patrol_boat:
+					return send_to_enemy("Hpat", btlshp);
+				default:
+					return -1; // this should not be executed
+			}
+		}
+
+		// No ships died, just send hit message
+		return send_to_enemy("H", btlshp);
+	} else if (btlshp->yours[row][col] == null) {
+		// Miss
+		btlshp->yours[row][col] = miss;
+
+		// Send the miss response
+		return send_to_enemy("X", btlshp);
+	} else {
+		// A repeat shot?
+		// Send the repeat message
+		return send_to_enemy("R", btlshp);
+	}
+}
+
+// Return the type of the ship that was hit. Also decrements the health of the hit ship
+static enum ship_type determine_hit(int row, int col, struct game *btlshp)
+{
+	if (btlshp == NULL) {
+		return dead; // Sanity check
+	}
+
+	for (int i = 0; i < 5; ++i) {
+		struct ship *tmp = &btlshp->boats[i];
+		if (tmp->health == dead)
+			continue; // ship is already downed
+
+		// Now check if the ship was hit
+		if (was_ship_hit(tmp, row, col)) {
+			tmp->health--; // decrement the ship health
+			return tmp->id;
+		}
+	}
+
+	return dead;
+}
+
+// Returns true if the ship was hit
+static int was_ship_hit(const struct ship *btl, int row, int col)
+{
+	if (btl == NULL)
+		return 0; // sanity check
+
+	// Determine the row and column range
+	int min_row = btl->row, max_row = btl->row;
+	int min_col = btl->row, max_col = btl->col;
+
+	// Get max ship health from type
+	int len = (btl->id == submarine) ? 2 : (btl->id - 1);
+
+	switch (btl->dir) {
+		case up:
+			min_row -= len;
+			break;
+		case down:
+			max_row += len;
+			break;
+		case left:
+			min_col -= len;
+			break;
+		default:
+			max_col += len;
+	}
+
+	return (min_row <= row && row <= max_row)
+		&& (min_col <= col && col >= max_col);
 }
