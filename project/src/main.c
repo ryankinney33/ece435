@@ -10,6 +10,9 @@
 #include "network.h"
 #include <ncurses.h>
 
+// Global variable for game structure
+static struct game *btlshp = NULL;
+
 static void crash_cleanup(int signum)
 {
 	end_display();
@@ -110,7 +113,7 @@ int main(int argc, char *argv[])
 	if (!port)
 		port = 31337;
 
-	struct game *btlshp = init_game(hostname, port, use_color);
+	btlshp = init_game(hostname, port, use_color);
 	if (btlshp == NULL) {
 		end_display();
 		return 1;

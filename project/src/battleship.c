@@ -242,24 +242,62 @@ int get_move_user(struct game *btlshp)
 		return -1;
 
 	// First get the move from the user
-	char prompt[34];
+	char *msg;
 	char buf[3];
-	snprintf(prompt, 34, "Enter your shot: ");
+	int row, col;
+	msg = "Enter your shot: ";
 	while (1) {
-		get_user_input(prompt, buf, 3);
+		get_user_input(msg, buf, 3);
 
 		// decode the input
-		int row, col;
 		if (decode_location(buf, &row, &col)) {
 			// There was an error
-			snprintf(prompt, 34, "Invalid input, please try again: ");
+			msg = "Invalid input, please try again: ";
 			continue;
 		}
 	}
 
 	// Send to other client
+	if (send_to_enemy(buf, btlshp) < 0) {
+		// there was an error
+		return -1;
+	}
 
 	// Get response and update the grid
+	msg = read_from_enemy(btlshp);
+	if (msg == NULL) {
+		// an error occurred
+		return -1;
+	}
+
+	// Decode message
+	if (msg[0] == 'X') {
+		// shot missed
+		btlshp->enemy[row][col] = miss;
+	} else if (msg[0] == 'H') {
+		// shot hit
+		btlshp->enemy[row][col] = hit;
+
+		// see if the enemy ship has sunk
+		if (msg[1] == 'C') {
+			// display carrier sunk message
+		} else if (msg[1] == 'B') {
+			// display battleship sunk message
+		} else if (msg[1] == 'D') {
+			// display destroyer sunk message
+		} else if (msg[1] == 'S') {
+			// display submarine sunk message
+		} else if (msg[1] == 'P') {
+			// display patrol boat sunk message
+		} else if (msg[1] == 'A') {
+			// game is over
+			// display game over message
+			free(msg);
+			return 1;
+		}
+	}
+
+	free(msg);
 	return 0;
 }
 
@@ -286,6 +324,9 @@ static int decode_location(const char buf[3], int *row, int *col)
 }
 
 // Waits until the enemy sends their move
+// Returns negative on error
+// Return 0 on success
+// Return 1 on game end
 int get_move_enemy(struct game *btlshp)
 {
 	// First, read the move from the enemy
@@ -322,21 +363,23 @@ int get_move_enemy(struct game *btlshp)
 		}
 
 		// Send the response message
-		if (dead_count == 5)
-			return send_to_enemy("Hded", btlshp);
+		if (dead_count == 5) {
+			int ret = send_to_enemy("HA", btlshp);
+			ret = (ret <= 0) ? ret : 1;
+		}
 
 		if (ship_died) {
 			switch (typ) {
 				case carrier:
-					return send_to_enemy("Hbat", btlshp);
+					return send_to_enemy("HC", btlshp);
 				case battleship:
-					return send_to_enemy("Hbat", btlshp);
+					return send_to_enemy("HB", btlshp);
 				case destroyer:
-					return send_to_enemy("Hdes", btlshp);
+					return send_to_enemy("HD", btlshp);
 				case submarine:
-					return send_to_enemy("Hsub", btlshp);
+					return send_to_enemy("HS", btlshp);
 				case patrol_boat:
-					return send_to_enemy("Hpat", btlshp);
+					return send_to_enemy("HP", btlshp);
 				default:
 					return -1; // this should not be executed
 			}
