@@ -21,3 +21,42 @@ END Ethernet HEADER
 2.
     a.
         The protocol is ARP -- address resolution protocol
+    b.
+        It is used to map an IP address to a MAC address. If the machine does not know
+        which MAC corresponds to a local IP address, it will broadcast "who-has IP",
+        and the corresponding machine will respond.
+
+3.
+    a.
+        Ethernet won because it was simpler and therefore cheaper than Token Ring
+    b.
+        The minimum frame size of 64 bytes was set so that the signal had enough
+        time to propagate down the cable and all the transmitters could notice
+        collisions.
+    c.
+        The maximum frame size was set to decrease the maximum possible network delay.
+        For example, very large frames will tie up the the network for longer.
+        For example, if Machine A is trying to send many small packets and Machine B
+        is sending a few large packets, then Machine A may have to wait a long time
+        for Machine B to finish.
+    d.
+        If the CRC is invalid, then the frame is silently dropped.
+
+4.
+       i.
+            00:25:90:e3:57:34
+      ii.
+           The OUI is 00:25:90 and corresponds to Super Micro Computer, Inc.
+     iii.
+           The MTU is 1500 bytes.
+      iv.
+           76139606874 bytes received
+       v.
+           18280800017 bytes transmitted
+      vi.
+           0 collisions detected
+     vii.
+           0 packets dropped
+    viii.
+           If the collision count is low, then the network may have very few machines
+           transmitting.
