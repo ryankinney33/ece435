@@ -52,6 +52,10 @@ struct game {
 	// The player's grid;
 	enum tile_state yours[10][10];
 
+	// Whose line is it anyway?
+	int turn; // 0 if enemy, 1 if ours
+	int game_over; // 1 if the game is over
+
 	// Socket stuff
 	int serv_fd;
 	int enemy_fd;

@@ -42,14 +42,21 @@ struct game *init_game(const char *hostname, uint16_t port, int use_color)
 			free(btlshp);
 			return NULL;
 		}
+
+		// Host moves first
+		btlshp->turn = 1;
 	} else {
 		printf("Connecting to %s on port %"PRIu16"\n", hostname, port);
 		if (join_game(hostname, port, btlshp) < 0) {
 			free(btlshp);
 			return NULL;
 		}
+
+		// Client moves second
+		btlshp->turn = 0;
 	}
 	printf("\nConnection received.\n");
+
 
 	// Make sure both grids are set to the default state
 	memset(btlshp->enemy, null, 100 * sizeof(enum tile_state));
@@ -69,6 +76,7 @@ struct game *init_game(const char *hostname, uint16_t port, int use_color)
 	setup_ship(&btlshp->boats[3], submarine, btlshp->yours);
 	display_grids(btlshp);
 	setup_ship(&btlshp->boats[4], patrol_boat, btlshp->yours);
+	btlshp->game_over = 0;
 
 	display_grids(btlshp);
 
@@ -246,8 +254,9 @@ int get_move_user(struct game *btlshp)
 	char buf[3];
 	int row, col;
 	msg = "Enter your shot: ";
-	while (1) {
-		get_user_input(msg, buf, 3);
+	int result = 1;
+	while (result) {
+		result = get_user_input(msg, buf, 3);
 
 		// decode the input
 		if (decode_location(buf, &row, &col)) {
@@ -255,6 +264,8 @@ int get_move_user(struct game *btlshp)
 			msg = "Invalid input, please try again: ";
 			continue;
 		}
+
+		break;
 	}
 
 	// Send to other client
@@ -269,6 +280,9 @@ int get_move_user(struct game *btlshp)
 		// an error occurred
 		return -1;
 	}
+
+	printw("msg = %s\n",msg);
+	refresh();
 
 	// Decode message
 	if (msg[0] == 'X') {
@@ -291,8 +305,8 @@ int get_move_user(struct game *btlshp)
 			// display patrol boat sunk message
 		} else if (msg[1] == 'A') {
 			// game is over
-			// display game over message
 			free(msg);
+			// display game over message
 			return 1;
 		}
 	}
@@ -451,4 +465,33 @@ static int was_ship_hit(const struct ship *btl, int row, int col)
 
 	return (min_row <= row && row <= max_row)
 		&& (min_col <= col && col >= max_col);
+}
+
+// Process a turn of the game
+// Returns 0 if the game is over
+// Returns negative if error
+int process_turn(struct game *btlshp)
+{
+	if (btlshp == NULL)
+		return -1; // sanity check
+
+	int res;
+
+	if (btlshp->turn) { // player's turn
+		res = get_move_user(btlshp);
+	} else {
+		res = get_move_enemy(btlshp);
+	}
+
+	// Handle the result
+	if (res < 0) { // errors
+		return -1;
+	} if (res == 1) { // game over; user wins
+		btlshp->game_over = 1;
+		return 0;
+	}
+
+	// Switch turn
+	btlshp->turn = !btlshp->turn;
+	return 1;
 }

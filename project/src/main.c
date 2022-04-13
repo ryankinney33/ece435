@@ -129,6 +129,13 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	// main game loop
+	while (1) {
+		display_grids(btlshp);
+		int result = process_turn(btlshp);
+		if (result < 0)
+			break;
+	}
 
 //	display_grids(btlshp);
 //	getch();

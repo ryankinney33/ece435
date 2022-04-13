@@ -13,4 +13,9 @@ int get_move_user(struct game *btlshp);
 // Get a move from the remote client
 int get_move_enemy(struct game *btlshp);
 
+// Process a turn of the game
+// Returns 0 if the game is over
+// Returns negative if error
+int process_turn(struct game *btlshp);
+
 #endif /* BATTLESHIP_H */
