@@ -9,7 +9,6 @@
 #include "battleship_types.h"
 #include "display.h"
 #include "network.h"
-#include <ncurses.h>
 
 
 // Private functions
@@ -87,8 +86,7 @@ struct game *init_game(const char *hostname, uint16_t port, int use_color)
 		return NULL;
 	}
 
-	printw("Waiting for other player...");
-	refresh();
+	display_status("Waiting for other player...");
 
 	// Wait for the other player to be ready
 	char *buf = read_from_enemy(btlshp);
@@ -249,6 +247,9 @@ int get_move_user(struct game *btlshp)
 	if (btlshp == NULL)
 		return -1;
 
+	display_status("Entering your shot...");
+	display_grids(btlshp);
+
 	// First get the move from the user
 	char *msg;
 	char buf[3];
@@ -279,9 +280,6 @@ int get_move_user(struct game *btlshp)
 		// an error occurred
 		return -1;
 	}
-
-	printw("msg = %s\n",msg);
-	refresh();
 
 	// Decode message
 	if (msg[0] == 'X') {
@@ -342,6 +340,13 @@ static int decode_location(const char buf[3], int *row, int *col)
 // Return 1 on game end
 int get_move_enemy(struct game *btlshp)
 {
+	if (btlshp == NULL) {
+		return -1;
+	}
+
+	display_status("Waiting for opponent...");
+	display_grids(btlshp);
+
 	// First, read the move from the enemy
 	char *msg = read_from_enemy(btlshp);
 	if (msg == NULL) {

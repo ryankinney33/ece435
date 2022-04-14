@@ -34,8 +34,9 @@ int init_display(int use_color)
 	// Start curses mode
 	initscr();
 
-	// Turn off cbreak
+	// Turn off cbreak and the cursor
 	nocbreak();
+	curs_set(0);
 
 	// Start color mode (if applicable)
 	if (use_color && init_colors()) {
@@ -152,3 +153,33 @@ void end_display()
 	endwin();
 }
 
+// Print a message on the first row; used for printing game status
+void display_status(const char *msg)
+{
+	if (msg == NULL)
+		return; // sanity check
+
+	// Move to the first row and clear the line
+	move(0,0);
+	clrtoeol();
+
+	// display the message on the screen
+	addstr(msg);
+	refresh();
+}
+
+// Display a message on the second row of the screen
+// Prints the message depending on if your shot was successful
+void display_message(const char *msg)
+{
+	if (msg == NULL)
+		return; // sanity check
+
+	// Move to the second row and clear the line
+	move(1,0);
+	clrtoeol();
+
+	// display the message on the screen
+	addstr(msg);
+	refresh();
+}
