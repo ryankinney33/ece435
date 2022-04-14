@@ -90,7 +90,8 @@ void display_grids(const struct game *btlshp)
 
 	const char tile_map[4] = {'~', 'S', 'X', 'H'};
 	const char tile_map_c[4] = {'~', ' ', 'X', 'X'};
-	clear();
+	move(2, 0);
+	clrtobot();
 	printw("  Your Ships\t Enemy Ships\n");
 	printw("  0123456789\t  0123456789\n");
 	for (int row = 0; row < 10; ++row) {
