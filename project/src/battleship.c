@@ -254,9 +254,8 @@ int get_move_user(struct game *btlshp)
 	char buf[3];
 	int row, col;
 	msg = "Enter your shot: ";
-	int result = 1;
-	while (result) {
-		result = get_user_input(msg, buf, 3);
+	while (1) {
+		get_user_input(msg, buf, 3);
 
 		// decode the input
 		if (decode_location(buf, &row, &col)) {
