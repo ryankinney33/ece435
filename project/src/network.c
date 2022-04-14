@@ -153,7 +153,7 @@ char *read_from_enemy(struct game *btlshp)
 		char buf[20];
 		memset(buf, 0, sizeof(char));
 		ssize_t res = recv(btlshp->enemy_fd, buf, 20, 0);
-		if (errno == EINTR) {
+		if (res < 0 && errno == EINTR) {
 			fprintf(stderr, "interrupted\n");
 			continue;
 		} else if (res < 0) {
