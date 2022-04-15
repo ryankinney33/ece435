@@ -1,4 +1,4 @@
-ECE435 HW#7 -- Spring 2022
+ECE435 HW#9 -- Spring 2022
 
 Name: Ryan Kinney
 
@@ -28,7 +28,7 @@ END Ethernet HEADER
 
 3.
     a.
-        Ethernet won because it was simpler and therefore cheaper than Token Ring
+        Ethernet won because it was simpler and therefore cheaper than Token Ring.
     b.
         The minimum frame size of 64 bytes was set so that the signal had enough
         time to propagate down the cable and all the transmitters could notice
