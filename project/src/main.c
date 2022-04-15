@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 	}
 
 	// main game loop
-	while (1) {
+	while (!btlshp->game_over) {
 		display_grids(btlshp);
 		int result = process_turn(btlshp);
 		if (result < 0)

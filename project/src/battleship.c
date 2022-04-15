@@ -292,14 +292,19 @@ int get_move_user(struct game *btlshp)
 		// see if the enemy ship has sunk
 		if (msg[1] == 'C') {
 			// display carrier sunk message
+			display_message("Enemy carrier destroyed");
 		} else if (msg[1] == 'B') {
 			// display battleship sunk message
+			display_message("Enemy battleship destroyed");
 		} else if (msg[1] == 'D') {
 			// display destroyer sunk message
+			display_message("Enemy destroyer destroyed");
 		} else if (msg[1] == 'S') {
 			// display submarine sunk message
+			display_message("Enemy submarine destroyed");
 		} else if (msg[1] == 'P') {
 			// display patrol boat sunk message
+			display_message("Enemy patrol boat destroyed");
 		} else if (msg[1] == 'A') {
 			// game is over
 			free(msg);
@@ -453,6 +458,7 @@ static int was_ship_hit(const struct ship *btl, int row, int col)
 	// Get max ship health from type
 	int len = (btl->id == submarine) ? 2 : (btl->id - 1);
 
+	// Set the row/column range for the ship
 	switch (btl->dir) {
 		case up:
 			min_row -= len;
@@ -467,8 +473,9 @@ static int was_ship_hit(const struct ship *btl, int row, int col)
 			max_col += len;
 	}
 
+	// Returns true if collision
 	return (min_row <= row && row <= max_row)
-		&& (min_col <= col && col >= max_col);
+		&& (min_col <= col && col <= max_col);
 }
 
 // Process a turn of the game

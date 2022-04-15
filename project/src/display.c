@@ -130,6 +130,9 @@ void display_grids(const struct game *btlshp)
 
 void get_user_input(const char *prompt, char *buf, int size)
 {
+	// Show the cursor
+	curs_set(1);
+
 	// clear the buffer
 	memset(buf, 0, size);
 
@@ -139,6 +142,9 @@ void get_user_input(const char *prompt, char *buf, int size)
 
 	// read the bytes from the user
 	getnstr(buf, size - 1);
+
+	// Hide the cursor
+	curs_set(0);
 }
 
 // A function to cleanly end the ncurses window
