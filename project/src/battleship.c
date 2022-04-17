@@ -308,6 +308,7 @@ int get_move_user(struct game *btlshp)
 		} else if (msg[1] == 'A') {
 			// game is over
 			free(msg);
+			btlshp->game_over = 1;
 			// display game over message
 			return 1;
 		}
@@ -387,8 +388,8 @@ int get_move_enemy(struct game *btlshp)
 
 		// Send the response message
 		if (dead_count == 5) {
-			int ret = send_to_enemy("HA", btlshp);
-			ret = (ret <= 0) ? ret : 1;
+			btlshp->game_over = 1;
+			return send_to_enemy("HA", btlshp);
 		}
 
 		if (ship_died) {
