@@ -284,6 +284,7 @@ int get_move_user(struct game *btlshp)
 	// Decode message
 	if (msg[0] == 'X') {
 		// shot missed
+		display_message("Your shot missed!");
 		btlshp->enemy[row][col] = miss;
 	} else if (msg[0] == 'H') {
 		// shot hit
@@ -311,6 +312,8 @@ int get_move_user(struct game *btlshp)
 			btlshp->game_over = 1;
 			// display game over message
 			return 1;
+		} else if (msg[1] == '\0') {
+			display_message("Direct hit!");
 		}
 	}
 
@@ -395,14 +398,19 @@ int get_move_enemy(struct game *btlshp)
 		if (ship_died) {
 			switch (typ) {
 				case carrier:
+					display_message("Your carrier sunk!");
 					return send_to_enemy("HC", btlshp);
 				case battleship:
+					display_message("Your battleship sunk!");
 					return send_to_enemy("HB", btlshp);
 				case destroyer:
+					display_message("Your destroyer sunk!");
 					return send_to_enemy("HD", btlshp);
 				case submarine:
+					display_message("Your submarine sunk!");
 					return send_to_enemy("HS", btlshp);
 				case patrol_boat:
+					display_message("Your patrol boat sunk!");
 					return send_to_enemy("HP", btlshp);
 				default:
 					return -1; // this should not be executed
@@ -410,12 +418,14 @@ int get_move_enemy(struct game *btlshp)
 		}
 
 		// No ships died, just send hit message
+		display_message("Hit!");
 		return send_to_enemy("H", btlshp);
 	} else if (btlshp->yours[row][col] == null) {
 		// Miss
 		btlshp->yours[row][col] = miss;
 
 		// Send the miss response
+		display_message("Miss!");
 		return send_to_enemy("X", btlshp);
 	} else {
 		// A repeat shot?
