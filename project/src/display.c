@@ -195,13 +195,15 @@ void display_game_over(int winner)
 {
 	move(0,0);
 	clear();
-	printw("You %s.", (winner) ? "win" : "lose");
+	printw("You %s.\n", (winner) ? "win" : "lose");
 	refresh();
 }
 
 // Wait for a user to press a button
 void wait_key(void)
 {
+	curs_set(1);
+	cbreak();
 	printw("Press any key to continue...");
 	refresh();
 	getch();

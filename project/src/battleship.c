@@ -311,6 +311,7 @@ int get_move_user(struct game *btlshp)
 			free(msg);
 			btlshp->game_over = 1;
 			// display game over message
+			display_game_over(1);
 			return 1;
 		} else if (msg[1] == '\0') {
 			display_message("Direct hit!");
