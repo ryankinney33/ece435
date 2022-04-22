@@ -4,8 +4,36 @@ Name: Ryan Kinney
 
 1.
 	a.
+		It watches for incoming frames and keeps track of their source addresses
+		in a table. When the destination is unknown, it broadcasts to all. Once
+		the destination also sends a frame, the table is updated and no longer
+		broadcasts.
 	b.
+		One reason is bandwidth concerns. By splitting a network up, there is less
+		of a chance for collisions to occur. In addition, a machine on a different
+		network does not affect the ability for a machine to transmit on its own
+		network, allowing for more data to be transmitted at a given time.
 2.
 	a.
+		P = 1W * 10^(31/10)/1000
+		P = 1.259W
 	b.
+		A microwave oven may be interfering with the connection, which is legal. The
+		frequency band in which WiFi operates in is an ISM band, which are generally
+		open.
 	c.
+		CSMA/CD is used to detect collisions. A machine would wait for the line to be
+		idle before starting to transmit. If two machines started transmitting,
+		simultaneously, a collision would occur and they would back off.
+		They would then wait a random amount of time before transmitting again.
+
+		CSMA/CA is used to avoid collisions. When a device wants to transmit, it
+		looks to see if the channel is clear. If clear, it waits a random time before
+		transmitting to avoid two waiters from starting simultaneously. If the channel
+		is busy, the device waits a random backoff time before starting. The device
+		waits for the receiver to send an ACK. If the ACK is not received, then it backs
+		off and retries.
+
+		One reason the wired Ethernet methodology was not used is due to the hidden
+		station problem. If machine A is in the range of B and machine B is in the range
+		of C, but A is not in the range of C, then they wont know if there was a collision.
