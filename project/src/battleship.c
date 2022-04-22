@@ -392,6 +392,8 @@ int get_move_enemy(struct game *btlshp)
 		// Send the response message
 		if (dead_count == 5) {
 			btlshp->game_over = 1;
+			// display game over message
+			display_game_over(0);
 			return send_to_enemy("HA", btlshp);
 		}
 

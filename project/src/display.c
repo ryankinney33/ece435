@@ -148,7 +148,7 @@ void get_user_input(const char *prompt, char *buf, int size)
 }
 
 // A function to cleanly end the ncurses window
-void end_display()
+void end_display(void)
 {
 	// restore colors?
 	if (using_colors && can_change_color()) {
@@ -189,3 +189,21 @@ void display_message(const char *msg)
 	addstr(msg);
 	refresh();
 }
+
+// Display the game over message
+void display_game_over(int winner)
+{
+	move(0,0);
+	clear();
+	printw("You %s.", (winner) ? "win" : "lose");
+	refresh();
+}
+
+// Wait for a user to press a button
+void wait_key(void)
+{
+	printw("Press any key to continue...");
+	refresh();
+	getch();
+}
+

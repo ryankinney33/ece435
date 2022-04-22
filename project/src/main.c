@@ -133,12 +133,11 @@ int main(int argc, char *argv[])
 	while (!btlshp->game_over) {
 		display_grids(btlshp);
 		int result = process_turn(btlshp);
-		if (result < 0)
+		if (result < 0 || btlshp->game_over)
 			break;
 	}
 
-//	display_grids(btlshp);
-//	getch();
+	wait_key();
 	end_display();
 
 	return 0;
