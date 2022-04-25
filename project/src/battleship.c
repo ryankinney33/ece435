@@ -89,18 +89,17 @@ struct game *init_game(const char *hostname, uint16_t port, int use_color)
 	display_status("Waiting for other player...");
 
 	// Wait for the other player to be ready
-	char *buf = read_from_enemy(btlshp);
-	if (buf == NULL) {
+	char buf[5];
+	int res = read_from_enemy(buf, btlshp);
+	if (res < 0) {
 		perror("read_from_enemy");
 		free(btlshp);
 		return NULL;
-	} else if (strcmp(buf, "done")) { // sanity check
+	} else if (strncmp(buf, "done", 4)) { // sanity check
 		fprintf(stderr, "Received unexpected message...\n");
 		free(btlshp);
-		free(buf);
 		return NULL;
 	}
-	free(buf);
 
 	return btlshp; // No more work to be done
 }
@@ -251,17 +250,17 @@ int get_move_user(struct game *btlshp)
 	display_grids(btlshp);
 
 	// First get the move from the user
-	char *msg;
+	char *prompt;
 	char buf[3];
 	int row, col;
-	msg = "Enter your shot: ";
+	prompt = "Enter your shot: ";
 	while (1) {
-		get_user_input(msg, buf, 3);
+		get_user_input(prompt, buf, 3);
 
 		// decode the input
 		if (decode_location(buf, &row, &col)) {
 			// There was an error
-			msg = "Invalid input, please try again: ";
+			prompt = "Invalid input, please try again: ";
 			continue;
 		}
 
@@ -275,8 +274,9 @@ int get_move_user(struct game *btlshp)
 	}
 
 	// Get response and update the grid
-	msg = read_from_enemy(btlshp);
-	if (msg == NULL) {
+	char msg[5];
+	int res = read_from_enemy(msg, btlshp);
+	if (res < 0) {
 		// an error occurred
 		return -1;
 	}
@@ -308,7 +308,6 @@ int get_move_user(struct game *btlshp)
 			display_message("Enemy patrol boat destroyed");
 		} else if (msg[1] == 'A') {
 			// game is over
-			free(msg);
 			btlshp->game_over = 1;
 			// display game over message
 			display_game_over(1);
@@ -318,7 +317,6 @@ int get_move_user(struct game *btlshp)
 		}
 	}
 
-	free(msg);
 	return 0;
 }
 
@@ -358,8 +356,9 @@ int get_move_enemy(struct game *btlshp)
 	display_grids(btlshp);
 
 	// First, read the move from the enemy
-	char *msg = read_from_enemy(btlshp);
-	if (msg == NULL) {
+	char msg[5];
+	int res = read_from_enemy(msg, btlshp);
+	if (res < 0) {
 		return -1;
 	}
 
@@ -369,7 +368,6 @@ int get_move_enemy(struct game *btlshp)
 	// The location has already been checked for validity by
 	// the enemy, no need to do it here
 	decode_location(msg, &row, &col);
-	free(msg); // done with msg
 
 	// Determine if there was a hit, miss, or repeat shot
 	if (btlshp->yours[row][col] == ship) {

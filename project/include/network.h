@@ -14,6 +14,6 @@ int join_game(const char *hostname, uint16_t port, struct game *btlshp);
 int send_to_enemy(const char *message, struct game *btlshp);
 
 // Read the message from enemy
-char *read_from_enemy(struct game *btlshp);
+int read_from_enemy(char *msg, struct game *btlshp);
 
 #endif
