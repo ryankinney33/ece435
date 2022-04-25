@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
-#include <stdint.h>
+#include <inttypes.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -37,7 +38,7 @@ int host_game(uint16_t port, struct game *btlshp)
 	 * early exit
 	 */
 	int on = 1;
-	if (setsockopt(btlshp->serv_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on))) {
+	if (setsockopt(btlshp->serv_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on))) {
 		perror("setsockopt");
 		return -1;
 	}
@@ -88,34 +89,38 @@ int join_game(const char *hostname, uint16_t port, struct game *btlshp)
 	}
 	btlshp->serv_fd = -1;
 
-	/*
-	 * Open a socket to connect to
-	 * AF_INET = IPv4
-	 * SOCK_STREAM is a reliable two-way connection (TCP)
-	 */
-	btlshp->enemy_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (btlshp->enemy_fd < 0) {
-		perror("socket");
+	struct addrinfo hints = {}, *addrs;
+	char port_str[16] = {};
+
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = 0;
+	sprintf(port_str, "%"PRIu16, port);
+	int err = getaddrinfo(hostname, port_str, &hints, &addrs);
+	if (err) {
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(err));
 		return -1;
 	}
 
-	// Look up the server info based on its name
-	struct hostent *server = gethostbyname(hostname);
-	if (server == NULL) {
-		fprintf(stderr, "Error: No such host.\n");
-		return -1;
+	int sd;
+	for (struct addrinfo *addr = addrs; addr != NULL; addr = addr->ai_next) {
+		sd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+		if (sd == -1)
+			continue;
+
+		if (connect(sd, addr->ai_addr, addr->ai_addrlen) == 0)
+			break;
+
+		close(sd);
+		sd = -1;
 	}
 
-	// Set the address and port of the server
-	struct sockaddr_in server_addr;
-	memset(&server_addr, 0, sizeof(server_addr));
-	server_addr.sin_family = AF_INET;
-	memcpy(server->h_addr, &server_addr.sin_addr.s_addr, server->h_length);
-	server_addr.sin_port = htons(port);
+	freeaddrinfo(addrs);
+	btlshp->enemy_fd = sd;
 
 	// Connect to the server
-	if (connect(btlshp->enemy_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-		perror("connect");
+	if (sd == -1) {
+		perror("join_game");
 		return -1;
 	}
 
