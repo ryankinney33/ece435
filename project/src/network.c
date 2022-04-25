@@ -84,7 +84,7 @@ int host_game(uint16_t port, struct game *btlshp)
 // Open a TCP connection to the host
 int join_game(const char *hostname, uint16_t port, struct game *btlshp)
 {
-	if (btlshp == NULL) {
+	if (btlshp == NULL || hostname == NULL) {
 		return -1; // Sanity check
 	}
 	btlshp->serv_fd = -1;
@@ -92,22 +92,25 @@ int join_game(const char *hostname, uint16_t port, struct game *btlshp)
 	struct addrinfo hints = {}, *addrs;
 	char port_str[16] = {};
 
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_protocol = 0;
-	sprintf(port_str, "%"PRIu16, port);
-	int err = getaddrinfo(hostname, port_str, &hints, &addrs);
+	hints.ai_family = AF_INET; // IPv4
+	hints.ai_socktype = SOCK_STREAM; // Reliable two-way connections
+	hints.ai_protocol = 0; // Any protocol
+	sprintf(port_str, "%"PRIu16, port); // Write the port
+	int err = getaddrinfo(hostname, port_str, &hints, &addrs); // Lookup the IP addresses for the hostname
 	if (err) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(err));
 		return -1;
 	}
 
+	// Loop through the returned IP addresses
 	int sd;
 	for (struct addrinfo *addr = addrs; addr != NULL; addr = addr->ai_next) {
+		// Open a socket
 		sd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 		if (sd == -1)
 			continue;
 
+		// Connect to the external IP
 		if (connect(sd, addr->ai_addr, addr->ai_addrlen) == 0)
 			break;
 
@@ -115,10 +118,9 @@ int join_game(const char *hostname, uint16_t port, struct game *btlshp)
 		sd = -1;
 	}
 
-	freeaddrinfo(addrs);
+	freeaddrinfo(addrs); // clear the linked list
 	btlshp->enemy_fd = sd;
 
-	// Connect to the server
 	if (sd == -1) {
 		perror("join_game");
 		return -1;
