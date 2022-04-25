@@ -92,11 +92,13 @@ int join_game(const char *hostname, uint16_t port, struct game *btlshp)
 	struct addrinfo hints = {}, *addrs;
 	char port_str[16] = {};
 
-	hints.ai_family = AF_INET; // IPv4
-	hints.ai_socktype = SOCK_STREAM; // Reliable two-way connections
-	hints.ai_protocol = 0; // Any protocol
+	hints.ai_family = AF_INET;          // IPv4
+	hints.ai_socktype = SOCK_STREAM;    // Reliable two-way connections
+	hints.ai_protocol = 0;              // Any protocol
 	sprintf(port_str, "%"PRIu16, port); // Write the port
-	int err = getaddrinfo(hostname, port_str, &hints, &addrs); // Lookup the IP addresses for the hostname
+
+	// Get the IP addresses of the hostname
+	int err = getaddrinfo(hostname, port_str, &hints, &addrs);
 	if (err) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(err));
 		return -1;
