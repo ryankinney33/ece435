@@ -182,19 +182,19 @@ static int set_ship_location(struct ship *btl, int row, int col, enum ship_direc
 	// Make sure the location and orientation are in-bounds
 	switch (dir) {
 		case up:
-			if (row < btl->health)
+			if (row < (btl->health - 1))
 				return -1;
 			break;
 		case down:
-			if (row + btl->health > 9)
+			if ((row + btl->health - 1) > 9)
 				return -1;
 			break;
 		case left:
-			if (col < btl->health)
+			if (col < (btl->health - 1))
 				return -1;
 			break;
 		case right:
-			if (col + btl->health > 9)
+			if ((col + btl->health - 1) > 9)
 				return -1;
 	}
 
