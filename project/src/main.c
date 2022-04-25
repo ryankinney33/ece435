@@ -8,21 +8,15 @@
 #include "display.h"
 #include "battleship.h"
 #include "network.h"
-#include <ncurses.h>
 
 // Global variable for game structure
 static struct game *btlshp = NULL;
 
 static void crash_cleanup(int signum)
 {
-	end_display();
-	fprintf(stderr, "Deadly signal arrived. Dyin...\n");
+	game_cleanup(btlshp);
+	psignal(signum, NULL);
 	exit(EXIT_FAILURE);
-}
-
-static void winch_h(int signum)
-{
-	refresh();
 }
 
 int main(int argc, char *argv[])
@@ -138,7 +132,7 @@ int main(int argc, char *argv[])
 	}
 
 	wait_key();
-	end_display();
+	game_cleanup(btlshp);
 
 	return 0;
 }

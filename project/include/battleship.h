@@ -18,4 +18,7 @@ int get_move_enemy(struct game *btlshp);
 // Returns negative if error
 int process_turn(struct game *btlshp);
 
+// Closes socket connections and cleans up the curses window
+void game_cleanup(struct game *btlshp);
+
 #endif /* BATTLESHIP_H */

@@ -31,4 +31,7 @@ void get_user_input(const char *prompt, char *buf, int size);
 // Wait for a user to press a button
 void wait_key(void);
 
+// Attempt to handle window resizing
+void winch_h(int signum);
+
 #endif /* DISPLAY_H */

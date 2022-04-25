@@ -209,3 +209,8 @@ void wait_key(void)
 	getch();
 }
 
+// Attempt to handle window resizing
+void winch_h(int signum)
+{
+	refresh();
+}

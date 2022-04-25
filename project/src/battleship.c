@@ -1,9 +1,9 @@
-#include <stddef.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <unistd.h>
 #include <inttypes.h>
 
 #include "battleship_types.h"
@@ -517,4 +517,21 @@ int process_turn(struct game *btlshp)
 	// Switch turn
 	btlshp->turn = !btlshp->turn;
 	return 1;
+}
+
+// Closes socket connections and cleans up the curses window
+void game_cleanup(struct game *btlshp)
+{
+	// Clear the curses window
+	end_display();
+
+	if (btlshp == NULL)
+		return; // sanity check
+
+	// Close the socket connections
+	close(btlshp->enemy_fd);
+	close(btlshp->serv_fd);
+
+	// Finally, free the dynamic memory
+	free(btlshp);
 }
