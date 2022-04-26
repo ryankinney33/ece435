@@ -40,8 +40,7 @@ int init_display(int use_color)
 
 	// Start color mode (if applicable)
 	if (use_color && init_colors()) {
-		fprintf(stderr, "Error: your terminal does not support color.\n");
-		return -1;
+		fprintf(stderr, "Error: your terminal does not support color; disabling color\n");
 	}
 
 	return 0;
@@ -51,7 +50,7 @@ static int init_colors(void)
 {
 	// Check if colors are supported
 	if (!has_colors()) {
-		endwin();
+		using_colors = 0;
 		return -1;
 	}
 	start_color();
