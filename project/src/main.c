@@ -127,8 +127,18 @@ int main(int argc, char *argv[])
 	while (!btlshp->game_over) {
 		display_grids(btlshp);
 		int result = process_turn(btlshp);
-		if (result < 0 || btlshp->game_over)
-			break;
+		if (result < 0) {
+			game_cleanup(btlshp);
+			return 1;
+		} else if (result == 0) {
+			// is the game over?
+			if (btlshp->game_over) {
+				break;
+			} else { // user disconnected
+				game_cleanup(btlshp);
+				return 1;
+			}
+		}
 	}
 
 	wait_key();

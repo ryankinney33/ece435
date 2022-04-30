@@ -54,8 +54,6 @@ struct game *init_game(const char *hostname, uint16_t port, int use_color)
 		// Client moves second
 		btlshp->turn = 0;
 	}
-	printf("\nConnection received.\n");
-
 
 	// Make sure both grids are set to the default state
 	memset(btlshp->enemy, null, 100 * sizeof(enum tile_state));
@@ -95,8 +93,7 @@ struct game *init_game(const char *hostname, uint16_t port, int use_color)
 		perror("read_from_enemy");
 		free(btlshp);
 		return NULL;
-	} else if (strncmp(buf, "done", 4)) { // sanity check
-		fprintf(stderr, "Received unexpected message...\n");
+	} else if (/*res == 0 ||*/ strncmp(buf, "done", 4)) { // sanity check
 		free(btlshp);
 		return NULL;
 	}
@@ -279,6 +276,9 @@ int get_move_user(struct game *btlshp)
 	if (res < 0) {
 		// an error occurred
 		return -1;
+	} else if (res == 0) {
+		// user disconnected
+		return 1;
 	}
 
 	// Decode message
@@ -360,6 +360,9 @@ int get_move_enemy(struct game *btlshp)
 	int res = read_from_enemy(msg, btlshp);
 	if (res < 0) {
 		return -1;
+	} else if(res == 0) {
+		// user disconnected
+		return 1;
 	}
 
 	// The string is simply the row column pair, such as j0
@@ -509,8 +512,7 @@ int process_turn(struct game *btlshp)
 	// Handle the result
 	if (res < 0) { // errors
 		return -1;
-	} if (res == 1) { // game over; user wins
-		btlshp->game_over = 1;
+	} if (res == 1) { // game over
 		return 0;
 	}
 
